@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -58,9 +55,6 @@ namespace Assignment
         Vector3 preTankPosition;
         Vector3 preDirection;
 
-        ////1:WASD move 2:RMB
-        //int movementMode=1;
-        //int cameraMoveCoolDown = 20;
 
         private float currentMoveSpeed = 0;
         private float maxMoveSpeed = 0.4f;
@@ -68,7 +62,6 @@ namespace Assignment
         private Vector3 currentVelocity;
         private float minStopSpeed = 0.1f;
         private float scaleRatio = 100f;
-
 
 
         public float WheelRotation
@@ -100,9 +93,6 @@ namespace Assignment
             get { return hatchRotationValue; }
             set { hatchRotationValue = value; }
         }
-
-
-
 
         //get tank position for bullet start point
         public static Vector3 tankPosition;
@@ -158,10 +148,6 @@ namespace Assignment
             ////Matrix turretRotation = Matrix.CreateRotationY(turretRotationValue);
             ////Matrix cannonRotation = Matrix.CreateRotationX(cannonRotationValue);
             ////Matrix hatchRotation = Matrix.CreateRotationX(hatchRotationValue);
-
-
-
-
 
 
 
@@ -265,9 +251,6 @@ namespace Assignment
             {
                 ModelManager.tankTrackSound.Stop();
             }
-
-
-
 
             base.Update(gameTime);
         }

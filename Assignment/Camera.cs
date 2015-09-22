@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace Assignment
 {
@@ -53,8 +46,6 @@ namespace Assignment
 
         private void CreateLookAt()
         {
-            //view = Matrix.CreateLookAt(cameraPosition,
-            //    cameraPosition + cameraDirection, cameraUp);
             view = Matrix.CreateLookAt(cameraPosition,
                 Tank.tankPosition+new Vector3(0,130,0), cameraUp);
         }
@@ -92,8 +83,6 @@ namespace Assignment
             skyBoxMove = preCameraPosition - cameraPosition;
             preCameraPosition = cameraPosition;
 
-           
-
             //Yaw rotation
             cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cameraUp,
                 (-MathHelper.PiOver4 / 70) *
@@ -114,16 +103,12 @@ namespace Assignment
             Vector3 cross = Vector3.Normalize(Vector3.Cross(cameraUp, cameraDirection));
                 cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cross,
                     (MathHelper.PiOver4 / 100) * (Mouse.GetState().Y - prevMouseState.Y)));
-                //cameraUp = Vector3.Transform(cameraUp, Matrix.CreateFromAxisAngle(cross,
-                //    (MathHelper.PiOver4 / 100) * (Mouse.GetState().Y - prevMouseState.Y)));
 
-                //Reset prevMouseState
-                prevMouseState = Mouse.GetState();
-
+            //Reset prevMouseState
+            prevMouseState = Mouse.GetState();
 
             //get static value for tank TurretRotation
             cameraDirectionStatic = cameraDirection;
-
 
             CreateLookAt();
             base.Update(gameTime);

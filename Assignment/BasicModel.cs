@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Assignment
@@ -50,7 +46,7 @@ namespace Assignment
         }
 
 
-        //public bool CollidesWith(Model otherModel, Matrix otherWorld)
+        //Collides
         public bool CollidesWith(Model model1, Matrix world1, Model model2, Matrix world2)
         {
             // Loop through each ModelMesh in both objects and compare

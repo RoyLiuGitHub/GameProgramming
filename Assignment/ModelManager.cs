@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+
 
 namespace Assignment
 {
@@ -19,7 +14,6 @@ namespace Assignment
         List<BasicModel> shots = new List<BasicModel>();
         List<BasicModel> enemies = new List<BasicModel>();
         List<BasicModel> boundary = new List<BasicModel>();
-
 
         //Enemy spawn variables
         Vector3 maxSpawnLocation = new Vector3(500, 0, 500);
@@ -42,7 +36,6 @@ namespace Assignment
         int maxZ = 3000;
         int minZ = -3000;
 
-
         // For font
         SpriteBatch spriteBatch;
         SpriteFont font;
@@ -55,7 +48,6 @@ namespace Assignment
         string score;
         string timeUsed;
 
-
         // Sound Effect
         public SoundEffect soundFX1;
         public SoundEffectInstance BGM;
@@ -66,8 +58,6 @@ namespace Assignment
         public static SoundEffect soundFX4;
         public static SoundEffectInstance tankTrackSound;
 
-
-
         //remove bullet
         public void UpdateShots(GameTime gameTime)
         {
@@ -77,7 +67,6 @@ namespace Assignment
             {
                 // Update each shot
                 shots[i].Update(gameTime);
-
 
                 Vector3 range = shots[i].GetWorldPublic().Translation - Tank.tankPosition;
                 if (range.X > maxX || range.X < minX
@@ -91,8 +80,6 @@ namespace Assignment
                 {
                     for (int j = 0; j < enemies.Count; ++j)
                     {
-                        //if (shots[i].CollidesWith(enemies[j].model,
-                        //    shots[i].GetWorldPublic()))
                         if (shots[i].CollidesWith(shots[i].model, (shots[i].GetWorldPublic() * 0.0000002f),
                             enemies[j].model, (enemies[j].GetWorldPublic() * 0.0000002f)))
 
@@ -109,13 +96,8 @@ namespace Assignment
                         }
                     }
                 }
-
-
             }
         }
-
-
-
 
         public ModelManager(Game game) : base(game)
         {
@@ -179,7 +161,6 @@ namespace Assignment
             tankTrackSound.IsLooped = false;
             //tankTrackSound.Play();
 
-
             base.LoadContent();
         }
         public override void Update(GameTime gameTime)
@@ -189,7 +170,6 @@ namespace Assignment
             {
                 models[i].Update(gameTime);
             }
-
 
             UpdateShots(gameTime);
 
@@ -212,8 +192,6 @@ namespace Assignment
             //update time and score
             score = PlayInfo.GetScore().ToString();
             timeUsed = PlayInfo.getTime().ToString("0.0");
-
-
 
             base.Update(gameTime);
         }
@@ -240,22 +218,14 @@ namespace Assignment
             }
 
             ///Draw score and time
-
             spriteBatch.Begin();
-            //spriteBatch.DrawString(font, "Hello world", new Vector2(120, 120), Color.Orchid);
-
             spriteBatch.DrawString(font, "Level: " + currentLevel+1, levelPosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Score: " + score + "/" + levelInfoList[currentLevel].numberEnemies, scorePosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
-
-
-
             if (LevelUp())
             {
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
             }
-
-
             spriteBatch.End();
 
             //Reset device states
@@ -332,9 +302,6 @@ namespace Assignment
                 position, direction*50, 0, 0, 0));
         }
 
-
-
-
         //Test game status
         private bool LevelUp()
         {
@@ -355,15 +322,7 @@ namespace Assignment
 
         public void setBoundary()
         {
-            //        enemies.Add(new Enemy(
-            //Game.Content.Load<Model>(@"Models\Tank\tank"),
-            //new Vector3(100, 0, 100), new Vector3(100, 0, 100), 0, 0, 0));
-
-
             int b = (int)Boundary.GetBoundary();
-    //        boundary.Add(new Boundary(
-    //               Game.Content.Load<Model>(@"Models/Boundary/stone"),
-    //new Vector3(100, 0, 100), new Vector3(100, 0, 100), 0, 0, 0));
             for (int x = -1 * b; x <= b; x += 30)
             {
                 boundary.Add(new Boundary(
@@ -383,7 +342,5 @@ namespace Assignment
                     new Vector3(-b, 0, x)));
             }
         }
-
-
     }
 }

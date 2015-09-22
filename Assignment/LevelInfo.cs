@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace Assignment
 {
     class LevelInfo
@@ -29,7 +25,6 @@ namespace Assignment
             this.minSpeed = minSpeed;
             this.maxSpeed = maxSpeed;
             this.missesAllowed = missesAllowed;
-
         }
     }
 }

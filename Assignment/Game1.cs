@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -39,13 +38,9 @@ namespace Assignment
                 graphics.IsFullScreen = true;
             #endif
 
-
-
         }
         protected override void Initialize()
         {
-            //camera = new Camera(this, new Vector3(0, 250, 50),
-            //    new Vector3(0, 250, 0), Vector3.Up);
             camera = new Camera(this, new Vector3(0, 150, 50),
             new Vector3(0, 150, 0), Vector3.Up);
             Components.Add(camera);
@@ -87,22 +82,15 @@ namespace Assignment
             {
                 // Did player press space bar or left mouse button?
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                    
 
                 {
                     bulletPosition = Tank.tankPosition;
                     bulletDirection = Tank.turretDirection;
                     // Add a shot to the model manager
-
-
-
                     modelManager.AddShot(
                        bulletPosition,
                         bulletDirection * shotSpeed);
 
-                    //ModelManager m = new ModelManager();
-                    //ModelManager.playShotSound();
-                    //modelManager = new ModelManager(this);
                     modelManager.playShotSound();
 
                     // Reset the shot countdown

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Assignment
 {
@@ -18,8 +13,8 @@ namespace Assignment
         float yawAngle = 0;
         float pitchAngle = 0;
         float rollAngle = 0;
+        float bulletSize = 0.1f;
         Vector3 direction;
-
         Vector3 position;
 
 
@@ -27,14 +22,13 @@ namespace Assignment
             Vector3 Direction, float yaw, float pitch, float roll)
             : base(model)
         {
-            world = Matrix.CreateScale(0.1f)*Matrix.CreateTranslation(Position);
+            world = Matrix.CreateScale(bulletSize) *Matrix.CreateTranslation(Position);
             yawAngle = yaw;
             pitchAngle = pitch;
             rollAngle = roll;
             direction = Direction;
             position = Position;
         }
-
 
 
         //public override void Update(GameTime gameTime)
