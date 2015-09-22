@@ -29,12 +29,12 @@ namespace Assignment
         //list of LevelInfo objects
         List<LevelInfo> levelInfoList = new List<LevelInfo>();
 
-        int maxX = 3000;
-        int minX = -3000;
-        int maxY = 1000;
-        int minY = -1000;
-        int maxZ = 3000;
-        int minZ = -3000;
+        private const int maxX = 3000;
+        private const int minX = -3000;
+        private const int maxY = 1000;
+        private const int minY = -1000;
+        private const int maxZ = 3000;
+        private const int minZ = -3000;
 
         // For font
         SpriteBatch spriteBatch;
@@ -88,10 +88,8 @@ namespace Assignment
                             enemies.RemoveAt(j);
                             shots.RemoveAt(i);
                             i -= 1;
-
                             //get score
                             PlayInfo.AddScore(1);
-
                             break;
                         }
                     }
@@ -248,7 +246,7 @@ namespace Assignment
         {
             // Generate random position with random X and random Y
             // between -maxX and maxX and -maxY and maxY. Z is always
-            // the same for all ships.
+            // the same for all enemies.
             Vector3 position = new Vector3(((Game1)Game).rnd.Next(
                 -(int)maxSpawnLocation.X, (int)maxSpawnLocation.X),
                 0,
@@ -275,7 +273,10 @@ namespace Assignment
             ++enemiesThisLevel;
             SetNextSpawnTime();
         }
-        // spawn a new enemy when the time is right
+        /// <summary>
+        /// spawn a new enemy when the time is right
+        /// </summary>
+        /// <param name="gameTime"></param>
         protected void CheckToSpawnEnemy(GameTime gameTime)
         {
             // Time to spawn a new enemy?
@@ -290,7 +291,11 @@ namespace Assignment
             }
         }
 
-        //Add bullet
+        /// <summary>
+        /// Add bullet
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="direction"></param>
         public void AddShot(Vector3 position, Vector3 direction)
         {
             direction = Camera.getCameraDirection();
@@ -302,7 +307,10 @@ namespace Assignment
                 position, direction*50, 0, 0, 0));
         }
 
-        //Test game status
+        /// <summary>
+        /// Test game status
+        /// </summary>
+        /// <returns></returns>
         private bool LevelUp()
         {
             if (PlayInfo.GetScore() == levelInfoList[currentLevel].numberEnemies)
@@ -320,6 +328,9 @@ namespace Assignment
             shotSound.Play();
         }
 
+        /// <summary>
+        /// create map boundary
+        /// </summary>
         public void setBoundary()
         {
             int b = (int)Boundary.GetBoundary();

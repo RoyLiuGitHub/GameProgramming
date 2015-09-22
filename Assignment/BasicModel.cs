@@ -31,38 +31,46 @@ namespace Assignment
                 mesh.Draw();
             }
         }
-
-        //change to public for bullet collision dection   (protected)
+        /// <summary>
+        /// change to public for bullet collision dection   (protected)
+        /// </summary>
+        /// <returns></returns>
         protected virtual Matrix GetWorld()
         {
             return world;
         }
 
-
-        //for bullet hit detection
+        /// <summary>
+        /// for bullet hit detection
+        /// </summary>
+        /// <returns></returns>
         public Matrix GetWorldPublic()
         {
             return world;
         }
 
 
-        //Collides
+        /// <summary>
+        /// Collides
+        /// Loop through each ModelMesh in both objects and compare
+        /// all bounding spheres for collisions
+        /// </summary>
+        /// <param name="model1">The first object</param>
+        /// <param name="world1">The first world</param>
+        /// <param name="model2">The Second object</param>
+        /// <param name="world2">The Second world</param>
+        /// <returns>true or false</returns>
         public bool CollidesWith(Model model1, Matrix world1, Model model2, Matrix world2)
         {
-            // Loop through each ModelMesh in both objects and compare
-            // all bounding spheres for collisions
-            //foreach (ModelMesh myModelMeshes in model.Meshes)
             foreach (ModelMesh m1 in model1.Meshes)
             {
-                //foreach (ModelMesh hisModelMeshes in otherModel.Meshes) 
                 foreach (ModelMesh m2 in model2.Meshes)
                 {
                     if (m1.BoundingSphere.Transform(world1).Intersects(m2.BoundingSphere.Transform(world2)))
                         return true;
                 }
             }
-            return false;
-            
+            return false;     
         }
     }
 }

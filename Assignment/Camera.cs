@@ -11,34 +11,23 @@ namespace Assignment
         Vector3 cameraDirection;
         Vector3 cameraUp;
         Vector3 preCameraPosition;
-        Vector3 displacement;
         Vector3 jumpSpeed = new Vector3(0, 5, 0);
         MouseState prevMouseState;
         Matrix test = Matrix.Identity;
-        float speed = 3;
-        int highPoint = 350;
-        int lowPoint = 250;
-        int jumpStatus = 0;
-
         Vector3 cameraDestination;
-        Vector3 autoMove;
-        int cameraMoveTime = 0;
         Vector3 cameraHeight = new Vector3(0,250,0);
 
         MousePick mousePick;
 
-        //1:WASD move 2:RMB
-        int movementMode = 1;
-        Vector3 autoMoveSpeed;
-        float movingTime;
-        float moveSpeed = 10;
-
-
         //For camera rotate tank
         float angle;
         int distance=300;
-
         static Vector3 cameraDirectionStatic;
+
+        /// <summary>
+        /// Get Camera Direction
+        /// </summary>
+        /// <returns></returns>
         public static Vector3 getCameraDirection()
         {
             return cameraDirectionStatic;
@@ -66,9 +55,11 @@ namespace Assignment
                 (float)Game.Window.ClientBounds.Height,
                 1, 8000);
         }
+        /// <summary>
+        /// Set Mouse Position and do initial get state
+        /// </summary>
         public override void Initialize()
         {
-            //Set Mouse Position and do initial get state
             Mouse.SetPosition(Game.Window.ClientBounds.Width / 2,
                 Game.Window.ClientBounds.Height / 2);
             prevMouseState = Mouse.GetState();
@@ -78,7 +69,6 @@ namespace Assignment
         }
         public override void Update(GameTime gameTime)
         {
-
             //calculate distance for skyBox movement
             skyBoxMove = preCameraPosition - cameraPosition;
             preCameraPosition = cameraPosition;

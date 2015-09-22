@@ -5,10 +5,6 @@ namespace Assignment
 {
     class Bullet:BasicModel
     {
-        ////bullet  change to public for shots count
-        //public List<BasicModel> shots = new List<BasicModel>();
-        float shotMinZ = -200;
-
         Matrix rotation = Matrix.Identity;
         float yawAngle = 0;
         float pitchAngle = 0;
@@ -16,7 +12,6 @@ namespace Assignment
         float bulletSize = 0.1f;
         Vector3 direction;
         Vector3 position;
-
 
         public Bullet(Model model, Vector3 Position, 
             Vector3 Direction, float yaw, float pitch, float roll)
@@ -30,8 +25,6 @@ namespace Assignment
             position = Position;
         }
 
-
-        //public override void Update(GameTime gameTime)
         public override void Update(GameTime gameTime)
         {
             // Rotate model
@@ -46,7 +39,6 @@ namespace Assignment
 
             base.Update(gameTime);
         }
-
 
         protected override Matrix GetWorld()
         {

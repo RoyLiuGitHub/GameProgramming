@@ -15,12 +15,11 @@ namespace Assignment
         ModelManager modelManager;
 
         //bullet profile
-        float shotSpeed = 0.01f;
-        int shotDelay = 2700;
+        private const float shotSpeed = 0.01f;
+        private const int shotDelay = 2700;
         int shotCountdown = 0;
         public Vector3 bulletPosition = Vector3.Zero;
         public Vector3 bulletDirection = Vector3.Zero;
-
 
         public Camera camera { get; protected set; }
         public Game1()
@@ -74,7 +73,6 @@ namespace Assignment
         }
 
         public Random rnd { get; protected set;}
-
 
         protected void FireShots(GameTime gameTime)
         {

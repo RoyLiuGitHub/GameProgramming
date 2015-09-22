@@ -11,17 +11,12 @@ namespace Assignment
         float yawAngle = 0;
         float pitchAngle = 0;
         float rollAngle = 0;
+        float angle;
         Vector3 direction;
-
         Vector3 position;
         Vector3 distance;
         Vector3 seekSpeed;
-
-        float angle;
-
-        int directionChangeCount = 0;
-
-        Vector3 destination; 
+        private const int seekDistance = 700;
 
         public Enemy(Model m, Vector3 Position,
             Vector3 Direction, float yaw, float pitch, float roll)
@@ -37,13 +32,12 @@ namespace Assignment
 
         public override void Update(GameTime gameTime)
         {
-
             distance = Tank.tankPosition - position;
             seekSpeed = distance;
             seekSpeed.Normalize();
 
             //seek
-            if (distance.X > 700 || distance.X < -700 || distance.Z > 700 || distance.Z < -700)
+            if (distance.X > seekDistance || distance.X < -seekDistance || distance.Z > seekDistance || distance.Z < -seekDistance)
             {
                 
                 position +=  seekSpeed;
@@ -65,7 +59,6 @@ namespace Assignment
             }
             base.Update(gameTime);
         }
-
         protected override Matrix GetWorld()
         {
             //return rotation * world;

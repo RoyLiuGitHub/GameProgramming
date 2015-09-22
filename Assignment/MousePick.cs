@@ -45,8 +45,6 @@ namespace Assignment
             Vector3? collisionPoint = resultVector + nearPoint;
 
             return collisionPoint;
-
         }
-
     }
 }
