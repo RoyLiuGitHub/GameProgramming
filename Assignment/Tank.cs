@@ -38,7 +38,7 @@ namespace Assignment
         float cannonRotationValue;
         float hatchRotationValue;
 
-        //tank speed
+        //tank speed.
         int speed = 3;
 
 
