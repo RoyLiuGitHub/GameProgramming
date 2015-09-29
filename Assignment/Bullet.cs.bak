@@ -13,6 +13,7 @@ namespace Assignment
         Vector3 direction;
         Vector3 position;
         //steven
+        private int test = 0;
 
         public Bullet(Model model, Vector3 Position, 
             Vector3 Direction, float yaw, float pitch, float roll)
