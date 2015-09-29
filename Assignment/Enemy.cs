@@ -61,9 +61,15 @@ namespace Assignment
         }
         protected override Matrix GetWorld()
         {
-            //return rotation * world;
-            return Matrix.CreateScale(0.20f) * rotation * world;
+            return Matrix.CreateScale(0.2f) * rotation * world;
         }
-
+        public override Matrix GetWorldPublic()
+        {
+            return Matrix.CreateScale(0.2f) * rotation * world;
+        }
+        public override Vector3 GetTankPosition()
+        {
+            return world.Translation;
+        }
     }
 }

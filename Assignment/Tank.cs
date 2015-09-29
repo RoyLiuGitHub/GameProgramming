@@ -107,8 +107,6 @@ namespace Assignment
         //    set { turretDirection = value; }
         //}
 
-            //test for starrattan
-
         public Tank(Model model, GraphicsDevice device, Camera camera)
             : base(model)
         {
@@ -156,6 +154,8 @@ namespace Assignment
             //TankTranslation(time);
             Navigate(gameTime);
             GetUserInput(gameTime);
+
+            TankTranslation(gameTime);
             LimitInBoundary();
 
             //if (Keyboard.GetState().IsKeyDown(Keys.W))
@@ -276,7 +276,7 @@ namespace Assignment
 
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                TankTranslation(time);
+                //TankTranslation(time);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
@@ -285,7 +285,7 @@ namespace Assignment
                 tankPosition -= displacement * speed;
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                TankTranslation(time);
+                //TankTranslation(time);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
@@ -293,7 +293,7 @@ namespace Assignment
                 rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / 50);
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                TankTranslation(time);
+                //TankTranslation(time);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
@@ -301,12 +301,14 @@ namespace Assignment
                 rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / -50);
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                TankTranslation(time);
+                //TankTranslation(time);
             }
         }
 
-        private void TankTranslation(float time)
+        private void TankTranslation(GameTime gameTime)
         {
+            float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+
             Matrix wheelRotation = Matrix.CreateRotationX(wheelRotationValue);
             Matrix steerRotation = Matrix.CreateRotationY(steerRotationValue);
             Matrix turretRotation = Matrix.CreateRotationY(turretRotationValue);

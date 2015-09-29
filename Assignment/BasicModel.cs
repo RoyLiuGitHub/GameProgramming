@@ -44,11 +44,15 @@ namespace Assignment
         /// for bullet hit detection
         /// </summary>
         /// <returns></returns>
-        public Matrix GetWorldPublic()
+
+        public virtual Vector3 GetTankPosition(){
+            return Vector3.Zero;
+        }
+
+        public virtual Matrix GetWorldPublic()
         {
             return world;
         }
-
 
         /// <summary>
         /// Collides

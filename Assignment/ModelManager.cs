@@ -80,9 +80,12 @@ namespace Assignment
                 {
                     for (int j = 0; j < enemies.Count; ++j)
                     {
-                        if (shots[i].CollidesWith(shots[i].model, (shots[i].GetWorldPublic() * 0.0000002f),
-                            enemies[j].model, (enemies[j].GetWorldPublic() * 0.0000002f)))
-
+                        //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
+                        if (shots[i].CollidesWith(
+                            shots[i].model,
+                            (shots[i].GetWorldPublic()), 
+                            enemies[j].model, 
+                            (enemies[j].GetWorldPublic())))
                         {
                             // Collision! remove the tank and the shot.
                             enemies.RemoveAt(j);

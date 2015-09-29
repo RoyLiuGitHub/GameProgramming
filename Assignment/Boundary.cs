@@ -5,7 +5,6 @@ namespace Assignment
 {
     class Boundary:BasicModel
     {
-
         Matrix translation = Matrix.Identity;
         private const float boundary = 4000f;
         public Boundary(Model model, Vector3 position)
