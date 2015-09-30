@@ -76,5 +76,9 @@ namespace Assignment
             }
             return false;     
         }
+
+        public virtual void setHamper()
+        {
+        }
     }
 }

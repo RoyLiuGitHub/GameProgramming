@@ -17,6 +17,7 @@ namespace Assignment
         Vector3 distance;
         Vector3 seekSpeed;
         private const int seekDistance = 700;
+        private bool bhamper = false;
 
         public Enemy(Model m, Vector3 Position,
             Vector3 Direction, float yaw, float pitch, float roll)
@@ -32,6 +33,16 @@ namespace Assignment
 
         public override void Update(GameTime gameTime)
         {
+            
+            if (bhamper)
+            {
+                seekSpeed = Vector3.Zero;
+                seekSpeed.Normalize();
+                bhamper = false;
+                base.Update(gameTime);
+                return;
+            }
+
             distance = Tank.tankPosition - position;
             seekSpeed = distance;
             seekSpeed.Normalize();
@@ -70,6 +81,10 @@ namespace Assignment
         public override Vector3 GetTankPosition()
         {
             return world.Translation;
+        }
+        public override void setHamper()
+        {
+            bhamper = true;
         }
     }
 }

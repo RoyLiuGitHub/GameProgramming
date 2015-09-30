@@ -58,6 +58,8 @@ namespace Assignment
         public static SoundEffect soundFX4;
         public static SoundEffectInstance tankTrackSound;
 
+        Tank player;
+
         //remove bullet
         public void UpdateShots(GameTime gameTime)
         {
@@ -133,11 +135,12 @@ namespace Assignment
             models.Add(new SkyBox(
                 Game.Content.Load<Model>(@"Models\SkyBox\skybox")));
 
-            models.Add(new Tank(
+            player = new Tank(
                 Game.Content.Load<Model>(@"Models\Tank\tank"),
                 ((Game1)Game).GraphicsDevice,
-                ((Game1)Game).camera)
-                );
+                ((Game1)Game).camera);
+
+            models.Add(player);
             setBoundary();
 
             //Create a new SpriteBatch, which can be used to draw textures.
@@ -164,6 +167,22 @@ namespace Assignment
 
             base.LoadContent();
         }
+        public void CheckEnemyCollision()
+        {
+            for (int j = 0; j < enemies.Count; ++j)
+            {
+                if (player.CollidesWith(
+                    player.model,
+                    (player.GetWorldPublic()),
+                    enemies[j].model,
+                    (enemies[j].GetWorldPublic())))
+                {
+                    player.setHamper();
+                    enemies[j].setHamper();
+                    break;
+                }
+            }
+        }
         public override void Update(GameTime gameTime)
         {
             // Loop through all models and call Update
@@ -188,6 +207,7 @@ namespace Assignment
 
             // Check to see if it's time to spawn
             CheckToSpawnEnemy(gameTime);
+            CheckEnemyCollision();
 
             PlayInfo.CalculateTime((float)gameTime.ElapsedGameTime.TotalMilliseconds);
             //update time and score
@@ -267,9 +287,13 @@ namespace Assignment
                     maxRollAngle - (maxRollAngle / 2);
 
             // Add model to the list
+            /*enemies.Add(new Enemy(
+                Game.Content.Load<Model>(@"Models\Enemy\tank"),
+                position, direction, 0, 0, rollRotation));*/
+
             enemies.Add(new Enemy(
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
-                position, direction, 0, 0, rollRotation));
+                new Vector3(300, 0, 0), direction, 0, 0, rollRotation));
 
 
             // Increment # of enemies this level and set next spawn time

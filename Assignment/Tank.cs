@@ -63,6 +63,8 @@ namespace Assignment
         private float minStopSpeed = 0.1f;
         private float scaleRatio = 100f;
 
+        private bool bhamper = false;
+
 
         public float WheelRotation
         {
@@ -266,6 +268,11 @@ namespace Assignment
             return Matrix.CreateScale(0.20f) * rotation * translation;
         }
 
+        public override Matrix GetWorldPublic()
+        {
+            return Matrix.CreateScale(0.2f) * rotation * translation;
+        }
+
         private void GetUserInput(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
@@ -394,6 +401,13 @@ namespace Assignment
                 }
             }
 
+            if (bhamper)
+            {
+                tankPosition = destination;
+                movingTime = 0f;
+                bhamper = false;
+            }
+
             if (tankPosition != destination)
             {
 
@@ -424,6 +438,11 @@ namespace Assignment
                 HatchRotation = 0;
                 translation.Translation = destination;
             }
+        }
+
+        public override void setHamper()
+        {
+            bhamper = true;
         }
     }
 }
