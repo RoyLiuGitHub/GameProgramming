@@ -40,6 +40,10 @@ namespace Assignment
             return world;
         }
 
+        public virtual void treedown()
+        {
+        }
+
         /// <summary>
         /// for bullet hit detection
         /// </summary>
@@ -79,6 +83,11 @@ namespace Assignment
 
         public virtual void setHamper()
         {
+        }
+
+        public virtual Vector3 getModelPosition()
+        {
+            return Vector3.Zero;
         }
     }
 }

@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace Assignment
@@ -13,6 +17,7 @@ namespace Assignment
         //bullet  change to public for shots count
         List<BasicModel> shots = new List<BasicModel>();
         List<BasicModel> enemies = new List<BasicModel>();
+        List<BasicModel> hampers = new List<BasicModel>();
         List<BasicModel> boundary = new List<BasicModel>();
 
         //Enemy spawn variables
@@ -59,6 +64,7 @@ namespace Assignment
         public static SoundEffectInstance tankTrackSound;
 
         Tank player;
+        private int treeWidth = 50;
 
         //remove bullet
         public void UpdateShots(GameTime gameTime)
@@ -135,6 +141,24 @@ namespace Assignment
             models.Add(new SkyBox(
                 Game.Content.Load<Model>(@"Models\SkyBox\skybox")));
 
+            
+            models.Add(new Tree(
+                Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(-300, 0, 0), 3.5f));
+
+            for (int i = 50; i < 90; i+=20)
+            {
+                for (int j = 60; j <= 60; j+=20)
+                {
+                    {
+                        hampers.Add(new Tree(
+                            Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(i, 0, j), 2f));
+                    }
+                }
+            }
+                
+                
+                
+
             player = new Tank(
                 Game.Content.Load<Model>(@"Models\Tank\tank"),
                 ((Game1)Game).GraphicsDevice,
@@ -183,6 +207,54 @@ namespace Assignment
                 }
             }
         }
+
+        public void CheckHamperCollision()
+        {
+            /*Vector3 tankPosition = player.getModelPosition();
+
+            for (int i = hampers.Count - 1; i >= 0; i--)
+            {
+                Vector3 obstaclePosition = hampers[i].getModelPosition();
+                Rectangle tankRect = new Rectangle((int)tankPosition.X,
+                    (int)tankPosition.Z, treeWidth, treeWidth);
+                Rectangle obstacleRect = new Rectangle((int)obstaclePosition.X,
+                    (int)obstaclePosition.Z, treeWidth, treeWidth);
+
+                //Console.WriteLine(playerTank.GetModelPosition().X);
+                //Console.WriteLine(playerTank.GetModelPosition().Y);
+                //Console.WriteLine(playerTank.GetModelPosition().Z);
+
+                if (tankRect.Intersects(obstacleRect))
+                {
+                    //Console.WriteLine("crush tree");
+                    hampers[i].treedown();
+                }
+                //roundPlayer(obstaclePosition, false);
+            }*/
+
+            Vector3 p1 = player.getModelPosition();
+            Console.WriteLine(p1.X);
+            Console.WriteLine(p1.Y);
+            Console.WriteLine(p1.Z);
+            for (int j = 0; j < hampers.Count; ++j)
+            {
+                /*Vector3 tree = hampers[j].getModelPosition();
+                Console.WriteLine(tree.X);
+                Console.WriteLine(tree.Y);
+                Console.WriteLine(tree.Z);*/
+
+                if (player.CollidesWith(
+                    player.model,
+                    (player.GetWorldPublic()),
+                    hampers[j].model,
+                    (hampers[j].GetWorldPublic())))
+                {
+                    hampers[j].treedown();
+                    break;
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             // Loop through all models and call Update
@@ -208,6 +280,7 @@ namespace Assignment
             // Check to see if it's time to spawn
             CheckToSpawnEnemy(gameTime);
             CheckEnemyCollision();
+            CheckHamperCollision();
 
             PlayInfo.CalculateTime((float)gameTime.ElapsedGameTime.TotalMilliseconds);
             //update time and score
@@ -236,6 +309,11 @@ namespace Assignment
             foreach (BasicModel b in boundary)
             {
                 b.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            }
+
+            foreach (BasicModel tree in hampers)
+            {
+                tree.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
             }
 
             ///Draw score and time
@@ -327,7 +405,7 @@ namespace Assignment
         {
             direction = Camera.getCameraDirection();
             direction.Y = 0;
-            position.Y = 60;
+            position.Y = 30;    //bullet heigth
             shots.Add(new Bullet(
                 //Game.Content.Load<Model>(@"Models\Bullet\ammo"),
                 Game.Content.Load<Model>(@"Models\Bullet\bullet"),

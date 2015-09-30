@@ -265,12 +265,17 @@ namespace Assignment
         }
         protected override Matrix GetWorld()
         {
-            return Matrix.CreateScale(0.20f) * rotation * translation;
+            return Matrix.CreateScale(0.1f) * rotation * translation;
         }
 
         public override Matrix GetWorldPublic()
         {
-            return Matrix.CreateScale(0.2f) * rotation * translation;
+            return Matrix.CreateScale(0.1f) * rotation * translation;
+        }
+
+        public override Vector3 getModelPosition()
+        {
+            return translation.Translation;
         }
 
         private void GetUserInput(GameTime gameTime)
@@ -375,6 +380,10 @@ namespace Assignment
         private void Navigate(GameTime gameTime)
         {
             Vector3? pickPosition = mousePick.GetCollisionPosition();
+            //Console.WriteLine("-------" + pickPosition.Value.X);
+            //Console.WriteLine("-------" + pickPosition.Value.Y);
+            //Console.WriteLine("-------" + pickPosition.Value.Z);
+
             float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
             if (Mouse.GetState().RightButton == ButtonState.Pressed
                 && pickPosition.HasValue == true)
