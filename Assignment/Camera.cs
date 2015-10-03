@@ -12,6 +12,11 @@ namespace Assignment
         public static Matrix projection { get; protected set; }
         static Vector3 cameraDirectionStatic;
 
+        float fieldOfView= MathHelper.PiOver4;
+        float zoomRate = 0.5f;
+        float nearPlaneDistance = 1;
+        float farPlaneDistance=8000;
+
         /// <summary>
         /// Get Camera Direction
         /// </summary>
@@ -52,10 +57,10 @@ namespace Assignment
             cameraUp = up;
             CreateLookAt();
             projection = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.PiOver4,
+                fieldOfView,
                 (float)Game.Window.ClientBounds.Width /
                 (float)Game.Window.ClientBounds.Height,
-                1, 8000);
+                nearPlaneDistance, farPlaneDistance);
         }
         /// <summary>
         /// Set Mouse Position and do initial get state
@@ -96,11 +101,32 @@ namespace Assignment
             cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cross,
                 (MathHelper.PiOver4 / 100) * (Mouse.GetState().Y - prevMouseState.Y)));
 
+            //Zoom
+            if (prevMouseState.ScrollWheelValue < Mouse.GetState().ScrollWheelValue)
+            {
+                projection = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView * zoomRate,
+                (float)Game.Window.ClientBounds.Width /
+                (float)Game.Window.ClientBounds.Height,
+                nearPlaneDistance, farPlaneDistance);
+            }
+            else if (prevMouseState.ScrollWheelValue > Mouse.GetState().ScrollWheelValue)
+            {
+                projection = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView,
+                (float)Game.Window.ClientBounds.Width /
+                (float)Game.Window.ClientBounds.Height,
+                nearPlaneDistance, farPlaneDistance);
+            }
+
             //Reset prevMouseState
             prevMouseState = Mouse.GetState();
 
             //get static value for tank TurretRotation
             cameraDirectionStatic = cameraDirection;
+
+
+
 
             CreateLookAt();
             base.Update(gameTime);
