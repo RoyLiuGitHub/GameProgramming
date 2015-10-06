@@ -66,6 +66,12 @@ namespace Assignment
         Tank player;
         private int treeWidth = 50;
 
+        //tank sight
+        Texture2D crosshairTexture;
+        //Vector2 sightPosition;
+        //SightFocus sightFocus;
+        ////sightFocus = new SightFocus(device, camera);
+
         //remove bullet
         public void UpdateShots(GameTime gameTime)
         {
@@ -155,9 +161,12 @@ namespace Assignment
                     }
                 }
             }
-                
-                
-                
+
+
+            //http://forum.warthunder.com/index.php?/topic/140894-will-we-ever-get-the-turmzielfernrohr-9bc-sights/
+            crosshairTexture = Game.Content.Load<Texture2D>(@"textures\crosshair");
+            //crosshairTexture = Game.Content.Load<Texture2D>(@"textures\tzf12a_rev4");
+
 
             player = new Tank(
                 Game.Content.Load<Model>(@"Models\Tank\tank"),
@@ -287,6 +296,18 @@ namespace Assignment
             score = PlayInfo.GetScore().ToString();
             timeUsed = PlayInfo.getTime().ToString("0.0");
 
+            ////update tank sight
+            //sightFocus = new SightFocus();
+            //sightPosition.X = sightFocus.GetCollisionPosition().X;
+            //sightPosition.Y = sightFocus.GetCollisionPosition().Y;
+            //if (sightPosition == Vector2.Zero)
+            //{
+            //    sightPosition = new Vector2((Game.Window.ClientBounds.Width / 2)
+            //        - (crosshairTexture.Width / 2),
+            //        (Game.Window.ClientBounds.Height / 2)
+            //        - (crosshairTexture.Height / 2));
+            //}
+
             base.Update(gameTime);
         }
         public override void Draw(GameTime gameTime)
@@ -326,6 +347,23 @@ namespace Assignment
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
             }
             spriteBatch.End();
+
+
+            //Draw tank sight
+            spriteBatch.Begin();
+
+            //spriteBatch.Draw(crosshairTexture,
+            //    sightPosition,
+            //        Color.White);
+            spriteBatch.Draw(crosshairTexture,
+                new Vector2((Game.Window.ClientBounds.Width / 2)
+                - (crosshairTexture.Width / 2),
+                (Game.Window.ClientBounds.Height / 2)
+                - (crosshairTexture.Height / 2)),
+                Color.White);
+
+            spriteBatch.End();
+
 
             //Reset device states
             GraphicsDevice.BlendState = BlendState.Opaque;
