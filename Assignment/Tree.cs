@@ -10,11 +10,11 @@ namespace Assignment
         Matrix translation = Matrix.Identity;
         Matrix rotation = Matrix.Identity;
         float scale;
-        public Tree(Model model, Vector3 position, float s)
+        public Tree(Model model, Vector3 position, float scale)
             : base(model)
         {
             translation = Matrix.CreateTranslation(position);
-            scale = s;
+            this.scale = scale;
         }
         public override void Update(GameTime gameTime)
         {
@@ -31,7 +31,7 @@ namespace Assignment
 
         public override Vector3 getModelPosition()
         {
-            return translation.Translation;
+            return translation.Translation* scale;
         }
         public override void treedown()
         {
@@ -44,9 +44,9 @@ namespace Assignment
             return Matrix.CreateScale(scale) * rotation * translation;
         }
 
-        public override Vector3 GetTankPosition()
-        {
-            return translation.Translation;
-        }
+        //public override Vector3 GetTankPosition()
+        //{
+        //    return translation.Translation;
+        //}
     }
 }

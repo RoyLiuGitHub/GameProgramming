@@ -20,6 +20,7 @@ namespace Assignment
         List<BasicModel> hampers = new List<BasicModel>();
         List<BasicModel> boundary = new List<BasicModel>();
 
+
         //Enemy spawn variables
         Vector3 maxSpawnLocation = new Vector3(500, 0, 500);
         int nextSpawnTime = 0;
@@ -143,24 +144,37 @@ namespace Assignment
         {
             models.Add(new Ground(
                 Game.Content.Load<Model>(@"Models\Ground\Ground")));
+            //        models.Add(new Ground(
+            //Game.Content.Load<Model>(@"Models\Terrain\dixing2")));
 
             models.Add(new SkyBox(
                 Game.Content.Load<Model>(@"Models\SkyBox\skybox")));
 
-            
-            models.Add(new Tree(
-                Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(-300, 0, 0), 3.5f));
 
-            for (int i = 50; i < 90; i+=20)
-            {
-                for (int j = 60; j <= 60; j+=20)
-                {
-                    {
-                        hampers.Add(new Tree(
-                            Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(i, 0, j), 2f));
-                    }
-                }
-            }
+
+
+
+            //Example Same coordinates but in different position.
+            boundary.Add(new Boundary(
+    Game.Content.Load<Model>(@"Tree/Date Palm"),
+    new Vector3(-300, 0, 0)));
+            boundary.Add(new Boundary(
+Game.Content.Load<Model>(@"Models/Boundary/stone"),
+new Vector3(-300, 0, 0)));
+
+            //        models.Add(new Tree(
+            //Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(-300, 0, 0), 2f));
+
+            //for (int i = 50; i < 90; i+=20)
+            //{
+            //    for (int j = 60; j <= 60; j+=20)
+            //    {
+            //        {
+            //            hampers.Add(new Tree(
+            //                Game.Content.Load<Model>(@"Tree\Date Palm"), new Vector3(i, 0, j), 2f));
+            //        }
+            //    }
+            //}
 
 
             //http://forum.warthunder.com/index.php?/topic/140894-will-we-ever-get-the-turmzielfernrohr-9bc-sights/
@@ -240,6 +254,8 @@ namespace Assignment
                 }
                 //roundPlayer(obstaclePosition, false);
             }*/
+
+            //Vector3 p1 = Tank.tankPosition;
 
             Vector3 p1 = player.getModelPosition();
             Console.WriteLine(p1.X);
@@ -407,9 +423,13 @@ namespace Assignment
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
                 position, direction, 0, 0, rollRotation));*/
 
+            //enemies.Add(new Enemy(
+            //    Game.Content.Load<Model>(@"Models\Enemy\tank"),
+            //    new Vector3(300, 0, 0), direction, 0, 0, rollRotation));
+
             enemies.Add(new Enemy(
-                Game.Content.Load<Model>(@"Models\Enemy\tank"),
-                new Vector3(300, 0, 0), direction, 0, 0, rollRotation));
+    Game.Content.Load<Model>(@"Models\Enemy\tank"),
+    position, direction, 0, 0, rollRotation));
 
 
             // Increment # of enemies this level and set next spawn time
