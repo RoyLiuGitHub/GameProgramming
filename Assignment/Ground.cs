@@ -15,10 +15,10 @@ namespace Assignment
             device.SamplerStates[0] = SamplerState.LinearWrap;
             base.Draw(device, camera);
         }
-        protected override Matrix GetWorld()
-        {
-            return Matrix.CreateScale(groundSize);
-        }
+        //protected override Matrix GetWorld()
+        //{
+        //    return Matrix.CreateScale(groundSize);
+        //}
 
     }
 }
