@@ -365,20 +365,20 @@ new Vector3(-300, 0, 0)));
             spriteBatch.End();
 
 
-            //Draw tank sight
-            spriteBatch.Begin();
+            ////Draw tank sight
+            //spriteBatch.Begin();
 
+            ////spriteBatch.Draw(crosshairTexture,
+            ////    sightPosition,
+            ////        Color.White);
             //spriteBatch.Draw(crosshairTexture,
-            //    sightPosition,
-            //        Color.White);
-            spriteBatch.Draw(crosshairTexture,
-                new Vector2((Game.Window.ClientBounds.Width / 2)
-                - (crosshairTexture.Width / 2),
-                (Game.Window.ClientBounds.Height / 2)
-                - (crosshairTexture.Height / 2)),
-                Color.White);
+            //    new Vector2((Game.Window.ClientBounds.Width / 2)
+            //    - (crosshairTexture.Width / 2),
+            //    (Game.Window.ClientBounds.Height / 2)
+            //    - (crosshairTexture.Height / 2)),
+            //    Color.White);
 
-            spriteBatch.End();
+            //spriteBatch.End();
 
 
             //Reset device states
@@ -461,7 +461,8 @@ new Vector3(-300, 0, 0)));
         /// <param name="direction"></param>
         public void AddShot(Vector3 position, Vector3 direction)
         {
-            direction = Camera.getCameraDirection();
+            //direction = Camera.getCameraDirection();
+            direction = player.getTankDirection();
             direction.Y = 0;
             position.Y = 30;    //bullet heigth
             shots.Add(new Bullet(

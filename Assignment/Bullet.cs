@@ -35,7 +35,11 @@ namespace Assignment
                 pitchAngle, rollAngle);
 
             // Move model
-            world *= Matrix.CreateTranslation(direction);
+            Vector3 temp = direction;
+            temp.Normalize();
+            temp *= 10;
+
+            world *= Matrix.CreateTranslation(temp);
 
             //calcaulate bullet position
             position += direction;

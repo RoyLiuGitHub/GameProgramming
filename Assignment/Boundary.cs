@@ -6,7 +6,7 @@ namespace Assignment
     class Boundary:BasicModel
     {
         Matrix translation = Matrix.Identity;
-        private const float boundary = 4000f;
+        private const float boundary = 2000f;
         public Boundary(Model model, Vector3 position)
             : base(model)
         {
@@ -22,7 +22,7 @@ namespace Assignment
         }
         protected override Matrix GetWorld()
         {
-            return Matrix.CreateScale(1) * translation;
+            return Matrix.CreateScale(2) * translation;
         }
         public static float GetBoundary()
         {

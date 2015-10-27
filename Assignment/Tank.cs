@@ -96,6 +96,11 @@ namespace Assignment
             set { hatchRotationValue = value; }
         }
 
+        public Vector3 getTankDirection()
+        {
+            return direction;
+        }
+
         //get tank position for bullet start point
         public static Vector3 tankPosition;
         //{
@@ -265,12 +270,12 @@ namespace Assignment
         }
         protected override Matrix GetWorld()
         {
-            return Matrix.CreateScale(0.1f) * rotation * translation;
+            return Matrix.CreateScale(0.2f) * rotation * translation;
         }
 
         public override Matrix GetWorldPublic()
         {
-            return Matrix.CreateScale(0.1f) * rotation * translation;
+            return Matrix.CreateScale(0.2f) * rotation * translation;
         }
 
         public override Vector3 getModelPosition()

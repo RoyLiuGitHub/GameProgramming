@@ -40,8 +40,8 @@ namespace Assignment
         }
         protected override void Initialize()
         {
-            camera = new Camera(this, new Vector3(0, 150, 50),
-            new Vector3(0, 150, 0), Vector3.Up);
+            camera = new Camera(this, new Vector3(0, 1500, 4000),
+            new Vector3(0, 0, 3000), Vector3.Up);
             Components.Add(camera);
             modelManager = new ModelManager(this);
             Components.Add(modelManager);

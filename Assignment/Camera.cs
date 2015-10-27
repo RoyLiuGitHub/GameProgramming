@@ -76,54 +76,54 @@ namespace Assignment
         }
         public override void Update(GameTime gameTime)
         {
-            //calculate distance for skyBox movement
-            skyBoxMove = preCameraPosition - cameraPosition;
-            preCameraPosition = cameraPosition;
+            ////calculate distance for skyBox movement
+            //skyBoxMove = preCameraPosition - cameraPosition;
+            //preCameraPosition = cameraPosition;
 
-            //Yaw rotation
-            cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cameraUp,
-                (-MathHelper.PiOver4 / 70) *
-                (Mouse.GetState().X - prevMouseState.X)));
+            ////Yaw rotation
+            //cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cameraUp,
+            //    (-MathHelper.PiOver4 / 70) *
+            //    (Mouse.GetState().X - prevMouseState.X)));
 
             
-            angle = (float)Math.Atan2(-cameraDirection.Z, -cameraDirection.X);
+            //angle = (float)Math.Atan2(-cameraDirection.Z, -cameraDirection.X);
 
-            Vector3 temp = Tank.tankPosition;
+            //Vector3 temp = Tank.tankPosition;
 
-            temp.X += (float)(Math.Cos(angle) * distance);
-            temp.Z += (float)(Math.Sin(angle) * distance);
-            temp.Y += cameraPosition.Y;
-            cameraPosition = temp;
+            //temp.X += (float)(Math.Cos(angle) * distance);
+            //temp.Z += (float)(Math.Sin(angle) * distance);
+            //temp.Y += cameraPosition.Y;
+            //cameraPosition = temp;
 
 
-            //Pitch rotation
-            Vector3 cross = Vector3.Normalize(Vector3.Cross(cameraUp, cameraDirection));
-            cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cross,
-                (MathHelper.PiOver4 / 100) * (Mouse.GetState().Y - prevMouseState.Y)));
+            ////Pitch rotation
+            //Vector3 cross = Vector3.Normalize(Vector3.Cross(cameraUp, cameraDirection));
+            //cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cross,
+            //    (MathHelper.PiOver4 / 100) * (Mouse.GetState().Y - prevMouseState.Y)));
 
-            //Zoom
-            if (prevMouseState.ScrollWheelValue < Mouse.GetState().ScrollWheelValue)
-            {
-                projection = Matrix.CreatePerspectiveFieldOfView(
-                fieldOfView * zoomRate,
-                (float)Game.Window.ClientBounds.Width /
-                (float)Game.Window.ClientBounds.Height,
-                nearPlaneDistance, farPlaneDistance);
-            }
-            else if (prevMouseState.ScrollWheelValue > Mouse.GetState().ScrollWheelValue)
-            {
-                projection = Matrix.CreatePerspectiveFieldOfView(
-                fieldOfView,
-                (float)Game.Window.ClientBounds.Width /
-                (float)Game.Window.ClientBounds.Height,
-                nearPlaneDistance, farPlaneDistance);
-            }
+            ////Zoom
+            //if (prevMouseState.ScrollWheelValue < Mouse.GetState().ScrollWheelValue)
+            //{
+            //    projection = Matrix.CreatePerspectiveFieldOfView(
+            //    fieldOfView * zoomRate,
+            //    (float)Game.Window.ClientBounds.Width /
+            //    (float)Game.Window.ClientBounds.Height,
+            //    nearPlaneDistance, farPlaneDistance);
+            //}
+            //else if (prevMouseState.ScrollWheelValue > Mouse.GetState().ScrollWheelValue)
+            //{
+            //    projection = Matrix.CreatePerspectiveFieldOfView(
+            //    fieldOfView,
+            //    (float)Game.Window.ClientBounds.Width /
+            //    (float)Game.Window.ClientBounds.Height,
+            //    nearPlaneDistance, farPlaneDistance);
+            //}
 
-            //Reset prevMouseState
-            prevMouseState = Mouse.GetState();
+            ////Reset prevMouseState
+            //prevMouseState = Mouse.GetState();
 
-            //get static value for tank TurretRotation
-            cameraDirectionStatic = cameraDirection;
+            ////get static value for tank TurretRotation
+            //cameraDirectionStatic = cameraDirection;
 
 
 

@@ -5,7 +5,7 @@ namespace Assignment
 {
     class SkyBox : BasicModel
     {
-        float skyBoxSize = 4000f;
+        float skyBoxSize = 3000f;
         public SkyBox(Model model)
             : base(model)
         {
@@ -21,10 +21,11 @@ namespace Assignment
         }
         protected override Matrix GetWorld()
         {
-            //Make skyBox follow the camera
-            Vector3 movement = Camera.cameraPosition;
-            movement.Y = 0;
-            return Matrix.CreateScale(skyBoxSize) * Matrix.CreateTranslation(movement);
+            ////Make skyBox follow the camera
+            //Vector3 movement = Camera.cameraPosition;
+            //movement.Y = 0;
+            //return Matrix.CreateScale(skyBoxSize) * Matrix.CreateTranslation(movement);
+            return Matrix.CreateScale(skyBoxSize);
         }
     }
 }
