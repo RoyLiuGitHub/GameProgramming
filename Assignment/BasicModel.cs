@@ -48,6 +48,10 @@ namespace Assignment
         {
             return Vector3.Zero;
         }
+        public virtual Matrix GetTankPosition()
+        {
+            return world;
+        }
 
         public virtual void setModelSpeed(float s)
         {

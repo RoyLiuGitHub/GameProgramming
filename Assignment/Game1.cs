@@ -21,6 +21,14 @@ namespace Assignment
         public GraphicsDevice device { get; protected set; }
         public Camera camera { get; protected set; }
 
+        //bullet profile
+        private const float shotSpeed = 0.01f;
+        private const int shotDelay = 2700;
+        int shotCountdown = 0;
+        public Vector3 bulletPosition = Vector3.Zero;
+        public Vector3 bulletDirection = Vector3.Zero;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -84,6 +92,8 @@ namespace Assignment
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // See if the player has fired a shot
+            FireShots(gameTime);
 
             // TODO: Add your update logic here
 
@@ -101,6 +111,30 @@ namespace Assignment
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+        protected void FireShots(GameTime gameTime)
+        {
+            if (shotCountdown <= 0)
+            {
+                // Did player press space bar or left mouse button?
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+
+                {
+                    bulletPosition = Tank.tankPosition;
+                    bulletDirection = Tank.turretDirection;
+                    // Add a shot to the model manager
+                    modelManager.AddShot(
+                       bulletPosition,
+                        bulletDirection * shotSpeed);
+
+                    //modelManager.playShotSound();
+
+                    // Reset the shot countdown
+                    shotCountdown = shotDelay;
+                }
+            }
+            else
+                shotCountdown -= gameTime.ElapsedGameTime.Milliseconds;
         }
     }
 }

@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="BasicModel.cs" />
     <Compile Include="Boundary.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Ground.cs" />

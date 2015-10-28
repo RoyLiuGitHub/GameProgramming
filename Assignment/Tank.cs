@@ -19,36 +19,35 @@ namespace Assignment
 
         MousePick mousePick;
 
-        ModelBone turretBone;
-        ModelBone cannonBone;
-        ModelBone lSteerEngineBone;
-        ModelBone rSteerEngineBone;
         ModelBone leftBackWheelBone;
         ModelBone rightBackWheelBone;
         ModelBone leftFrontWheelBone;
         ModelBone rightFrontWheelBone;
+        ModelBone leftSteerBone;
+        ModelBone rightSteerBone;
+        ModelBone turretBone;
+        ModelBone cannonBone;
         ModelBone hatchBone;
-        ModelBone tankBone;
 
         Vector3 distance;
         Vector3 destination;
         Vector3 direction = new Vector3(0, 0, 1);
 
-        Matrix turretTransform;
-        Matrix cannonTransform;
-        Matrix lSteerEngineTransform;
-        Matrix rSteerEngineTransform;
         Matrix leftBackWheelTransform;
         Matrix rightBackWheelTransform;
         Matrix leftFrontWheelTransform;
         Matrix rightFrontWheelTransform;
+        Matrix leftSteerTransform;
+        Matrix rightSteerTransform;
+        Matrix turretTransform;
+        Matrix cannonTransform;
         Matrix hatchTransform;
-        Matrix tankTransform;
 
+        float wheelRotationValue;
+        float steerRotationValue;
         float turretRotationValue;
         float cannonRotationValue;
-        float steerRotationValue;
-        float wheelRotationValue;
+        float hatchRotationValue;
 
         private const float MaxTurretAngle = 1.0f;
         private const float MinTurretAngle = -1.0f;
@@ -74,19 +73,37 @@ namespace Assignment
         Vector3? preMousePick;
         bool bStart;
 
-        public float WheelRotationValue
+
+        private float scaleRatio = 100f;
+        Vector3 displacement;
+        Vector3 preTankPosition;
+        Vector3 preDirection;
+        public static Vector3 tankPosition;
+        //{
+        //    get { return tankPosition; }
+        //    protected set { tankPosition = value; }
+        //}
+        //get turret for bullet direction
+
+        public static Vector3 turretDirection;
+        //{
+        //    get { return turretDirection; }
+        //    set { turretDirection = value; }
+        //}
+
+
+        float movingTime = 0;
+        float angle;
+        //tank moving speed    fixed speed for WASD movement
+        int WASDspeed = 10;
+
+        public float WheelRotation
         {
             get { return wheelRotationValue; }
             set { wheelRotationValue = value; }
         }
 
-        public float WheelRotationValueUpDown;
-        /*{
-            get { return WheelRotationValueUpDown; }
-            set { WheelRotationValueUpDown = value; }
-        }*/
-
-        public float SteerRotationValue
+        public float SteerRotation
         {
             get { return steerRotationValue; }
             set { steerRotationValue = value; }
@@ -95,30 +112,34 @@ namespace Assignment
         public float TurretRotation
         {
             get { return turretRotationValue; }
-            set
-            {
-                if (value > MaxTurretAngle)
-                    turretRotationValue = MaxTurretAngle;
-                else if (value < MinTurretAngle)
-                    turretRotationValue = MinTurretAngle;
-                else
-                    turretRotationValue = value;
-            }
+            set { turretRotationValue = value; }
         }
 
         public float CannonRotation
         {
             get { return cannonRotationValue; }
-            set
-            {
-                if (value > MaxCannonAngle)
-                    cannonRotationValue = MaxCannonAngle;
-                else if (value < MinCannonAngle)
-                    cannonRotationValue = MinCannonAngle;
-                else
-                    cannonRotationValue = value;
-            }
+            set { cannonRotationValue = value; }
         }
+
+        public float HatchRotation
+        {
+            get { return hatchRotationValue; }
+            set { hatchRotationValue = value; }
+        }
+
+        public Vector3 getTankDirection()
+        {
+            return direction;
+        }
+
+
+
+
+        public float WheelRotationValueUpDown;
+        /*{
+            get { return WheelRotationValueUpDown; }
+            set { WheelRotationValueUpDown = value; }
+        }*/
 
 
         public Tank(Model model, GraphicsDevice device, Camera camera)
@@ -128,34 +149,31 @@ namespace Assignment
             curPosition = Vector3.Zero;
             WheelRotationValueUpDown = 0f;
 
+            v = new Velocity();
+            preMousePick = Vector3.Zero;
 
             mousePick = new MousePick(device, camera);
 
-            turretBone = model.Bones["turret_geo"];
-            cannonBone = model.Bones["canon_geo"];
-            lSteerEngineBone = model.Bones["l_steer_geo"];
-            rSteerEngineBone = model.Bones["r_steer_geo"];
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
             rightBackWheelBone = model.Bones["r_back_wheel_geo"];
             leftFrontWheelBone = model.Bones["l_front_wheel_geo"];
             rightFrontWheelBone = model.Bones["r_front_wheel_geo"];
+            leftSteerBone = model.Bones["l_steer_geo"];
+            rightSteerBone = model.Bones["r_steer_geo"];
+            turretBone = model.Bones["turret_geo"];
+            cannonBone = model.Bones["canon_geo"];
             hatchBone = model.Bones["hatch_geo"];
-            tankBone = model.Bones["tank_geo"];
 
-
-            turretTransform = turretBone.Transform;
-            cannonTransform = cannonBone.Transform;
-            lSteerEngineTransform = lSteerEngineBone.Transform;
-            rSteerEngineTransform = rSteerEngineBone.Transform;
             leftBackWheelTransform = leftBackWheelBone.Transform;
             rightBackWheelTransform = rightBackWheelBone.Transform;
             leftFrontWheelTransform = leftFrontWheelBone.Transform;
             rightFrontWheelTransform = rightFrontWheelBone.Transform;
+            leftSteerTransform = leftSteerBone.Transform;
+            rightSteerTransform = rightSteerBone.Transform;
+            turretTransform = turretBone.Transform;
+            cannonTransform = cannonBone.Transform;
             hatchTransform = hatchBone.Transform;
-            tankTransform = tankBone.Transform;
 
-            v = new Velocity();
-            preMousePick = Vector3.Zero;
         }
 
         struct WorldObject
@@ -212,11 +230,11 @@ namespace Assignment
                            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                           { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                           { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
-                           { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                           { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                           { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+                           { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -228,121 +246,34 @@ namespace Assignment
 
         public override void update(GameTime gameTime)
         {
-            base.update(gameTime);
-            float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 100.0f;
-            float rotationPerFrame = timeDifference * 1f;
-            float movementPerFrame = timeDifference * 1f;
+            preTankPosition = tankPosition;
+            preDirection = direction;
 
 
-            lSteerEngineBone.Transform = Matrix.CreateRotationY(wheelRotationValue) * lSteerEngineTransform;
-            rSteerEngineBone.Transform = Matrix.CreateRotationY(wheelRotationValue) * rSteerEngineTransform;
 
-            wheelRollMatrix *= Matrix.CreateRotationX(wheelRotationValue);
-            leftBackWheelBone.Transform = Matrix.CreateRotationX(wheelRotationValue) * leftBackWheelTransform;
-            rightBackWheelBone.Transform = Matrix.CreateRotationX(wheelRotationValue) * rightBackWheelTransform;
-            leftFrontWheelBone.Transform = Matrix.CreateRotationX(wheelRotationValue) * leftFrontWheelTransform;
-            rightFrontWheelBone.Transform = Matrix.CreateRotationX(wheelRotationValue) * rightFrontWheelTransform;
-            rightBackWheelBone.Transform = Matrix.CreateRotationX(WheelRotationValue) * rightBackWheelTransform;
+            Navigate(gameTime);
+            GetUserInput(gameTime);
 
-            MouseState mousestate = Mouse.GetState();
+            TankTranslation(gameTime);
+            LimitInBoundary();
 
 
-            float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed
-                && pickPosition.HasValue == true)
-            {
-                preMousePick = pickPosition;
-                bStart = false;
-                Vector3? cp = new Vector3?(getCurrentPosition());
-                Grid currentPositionRowCol = getPointRowCol(cp);
-
-                pickPosition = mousePick.GetCollisionPosition();
-                Grid destinationPositionRowCol = getPointRowCol(pickPosition);
-
-                initMap();
-                Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
-
-                if (p != null)
-                {
-                    Vector3 nextcood = getPointCood(p);
-                    destination = nextcood;
-                    //destination = pickPosition.Value;
-
-                    destination.Y = 0;
-                    distance = destination - getCurrentPosition();
-
-                    direction = distance;
-                    direction.Normalize();
-                }
-
-            }
-
-            if (lGarr != null)
-            {
-                Vector3 tmpver3 = Vector3.Zero;
-                if (lGarr.Count >= 2)
-                {
-                    tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
-                }
-                else if (lGarr.Count == 1)
-                {
-                    tmpver3 = getPointCood(lGarr[0]);
-                }
-
-                //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
-                //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
-                if (Math.Abs(tmpver3.X - translation.Translation.X) < 20 && Math.Abs(tmpver3.Y - translation.Translation.Y) < 20)
-                {
-                    if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
-                    else if (lGarr.Count == 1)
-                    {
-                        lGarr.RemoveAt(0);
-                        bStart = true;
-                    }
-
-                    if (lGarr.Count >= 2)
-                    {
-                        destination = getPointCood(lGarr[lGarr.Count - 2]);
-                        //destination = pickPosition.Value;
-
-                        destination.Y = 0;
-                        distance = destination - getCurrentPosition();
-
-                        direction = distance;
-                        direction.Normalize();
-                    }
-                }
-
-            }
-            if (bStart && preMousePick != Vector3.Zero)
-            {
-                destination = pickPosition.Value;
-
-                destination.Y = 0;
-                distance = destination - getCurrentPosition();
-
-                direction = distance;
-                direction.Normalize();
-            }
+            translation.Translation = tankPosition;
 
 
-            if (!inBrakeRange(destination))
-            {
-                v.increaseVelocity(gameTime);
-                speed = direction * v.Speed;
-                translation.Translation += speed;
-            }
-            else
-            {
-                speed = Vector3.Zero;
-                translation.Translation += speed;
-                v.Speed = 0;
-            }
+            //For bullet direction
+            turretDirection = Vector3.Transform(tankPosition, turretBone.Transform);
 
-            hatchBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * hatchTransform;
-            tankBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * tankTransform;
 
-            base.update(gameTime);
+            ////play track music
+            //if (preTankPosition != tankPosition || preDirection != direction)
+            //{
+            //    ModelManager.tankTrackSound.Resume();
+            //}
+            //else
+            //{
+            //    ModelManager.tankTrackSound.Stop();
+            //}
 
         }
 
@@ -477,7 +408,266 @@ namespace Assignment
         {
             return translation.Translation;
         }
+        private void Navigate(GameTime gameTime)
+        {
+
+
+            //float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+            //if (Mouse.GetState().RightButton == ButtonState.Pressed
+            //    && pickPosition.HasValue == true)
+            //{
+            //    Vector3? pickPosition = mousePick.GetCollisionPosition();
+            //    destination = pickPosition.Value;
+            //    destination.Y = 0;
+
+
+            //    Grid currentPositionRowCol = getPointRowCol(tankPosition);
+            //    Grid destinationPositionRowCol = getPointRowCol(pickPosition);
+            //    initMap();
+            //    Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
+
+            //    if (p != null)
+            //    {
+
+            //        p = p.ParentPoint;
+            //        Vector3 nextcood = getPointCood(p);
+            //        destination = nextcood;
+            //        destination.Y = 0;
+            //        distance = destination - getCurrentPosition();
+
+            //        direction = distance;
+            //        direction.Normalize();
+            //    }
+
+            //}
+
+
+            //angle = (float)Math.Atan2((pickPosition.Value.X - tankPosition.X), (pickPosition.Value.Z - tankPosition.Z));
+
+            //rotation = Matrix.CreateRotationY(angle);
+
+            //if (distance.X != 0)
+            //{
+            //    movingTime = distance.X / direction.X;
+            //}
+            //else
+            //{
+            //    movingTime = distance.Z / direction.Z;
+            //}
+
+
+            //if (tankPosition != destination)
+            //{
+
+            //    WheelRotation = time * 5;
+            //    SteerRotation = (float)Math.Sin(time * 0.75f) * 0.5f;
+            //    CannonRotation = (float)Math.Sin(time * 0.25f) * 0.333f - 0.333f;
+            //    HatchRotation = MathHelper.Clamp((float)Math.Sin(time * 2) * 2, -1, 0);
+
+            //    if (movingTime > (gameTime.ElapsedGameTime.Milliseconds))
+            //    {
+            //        tankPosition += direction * gameTime.ElapsedGameTime.Milliseconds;
+            //        translation.Translation = tankPosition + direction * gameTime.ElapsedGameTime.Milliseconds;
+            //        movingTime -= gameTime.ElapsedGameTime.Milliseconds;
+            //    }
+            //    else if (movingTime != 0 && movingTime <= gameTime.ElapsedGameTime.Milliseconds)
+            //    {
+            //        translation.Translation = direction * movingTime;
+            //        tankPosition += direction * movingTime;
+            //        movingTime = 0;
+            //    }
+            //}
+
+            //if (movingTime == 0f)
+            //{
+            //    WheelRotation = 0;
+            //    SteerRotation = 0;
+            //    CannonRotation = 0;
+            //    HatchRotation = 0;
+            //    translation.Translation = destination;
+            //}
+
+            float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
+            if (Mouse.GetState().RightButton == ButtonState.Pressed
+                && pickPosition.HasValue == true)
+            {
+                preMousePick = pickPosition;
+                bStart = false;
+                Vector3? cp = new Vector3?(getCurrentPosition());
+                Grid currentPositionRowCol = getPointRowCol(cp);
+
+                pickPosition = mousePick.GetCollisionPosition();
+                Grid destinationPositionRowCol = getPointRowCol(pickPosition);
+
+                initMap();
+                Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
+
+                if (p != null)
+                {
+                    Vector3 nextcood = getPointCood(p);
+                    destination = nextcood;
+                    //destination = pickPosition.Value;
+
+                    destination.Y = 0;
+                    distance = destination - getCurrentPosition();
+
+                    direction = distance;
+                    direction.Normalize();
+                }
+
+            }
+
+            if (lGarr != null)
+            {
+                Vector3 tmpver3 = Vector3.Zero;
+                if (lGarr.Count >= 2)
+                {
+                    tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
+                }
+                else if (lGarr.Count == 1)
+                {
+                    tmpver3 = getPointCood(lGarr[0]);
+                }
+
+                //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
+                //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
+                if (Math.Abs(tmpver3.X - translation.Translation.X) < 20 && Math.Abs(tmpver3.Y - translation.Translation.Y) < 20)
+                {
+                    if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
+                    else if (lGarr.Count == 1)
+                    {
+                        lGarr.RemoveAt(0);
+                        bStart = true;
+                    }
+
+                    if (lGarr.Count >= 2)
+                    {
+                        destination = getPointCood(lGarr[lGarr.Count - 2]);
+                        //destination = pickPosition.Value;
+
+                        destination.Y = 0;
+                        distance = destination - getCurrentPosition();
+
+                        direction = distance;
+                        direction.Normalize();
+                    }
+                }
+
+            }
+            if (bStart && preMousePick != Vector3.Zero)
+            {
+                destination = pickPosition.Value;
+
+                destination.Y = 0;
+                distance = destination - getCurrentPosition();
+
+                direction = distance;
+                direction.Normalize();
+            }
+
+
+            if (!inBrakeRange(destination))
+            {
+                v.increaseVelocity(gameTime);
+                speed = direction * v.Speed;
+                translation.Translation += speed;
+                //tankPosition += speed;
+            }
+            else
+            {
+                speed = Vector3.Zero;
+                translation.Translation += speed;
+                translation.Translation += direction;
+                //tankPosition += direction;
+                v.Speed = 0;
+            }
+            base.update(gameTime);
+        }
+        private void GetUserInput(GameTime gameTime)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                displacement = direction;
+                displacement.Y = 0;
+                tankPosition += displacement * WASDspeed;
+
+
+                float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+                //TankTranslation(time);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                displacement = direction;
+                displacement.Y = 0;
+                tankPosition -= displacement * WASDspeed;
+
+                float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+                //TankTranslation(time);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                direction = Vector3.Transform(direction, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / 50));
+                rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / 50);
+
+                float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+                //TankTranslation(time);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                direction = Vector3.Transform(direction, Matrix.CreateFromAxisAngle(Vector3.Up, -MathHelper.PiOver4 / 50));
+                rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / -50);
+
+                float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+                //TankTranslation(time);
+            }
+        }
+        private void TankTranslation(GameTime gameTime)
+        {
+            float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
+
+            Matrix wheelRotation = Matrix.CreateRotationX(wheelRotationValue);
+            Matrix steerRotation = Matrix.CreateRotationY(steerRotationValue);
+            Matrix turretRotation = Matrix.CreateRotationY(turretRotationValue);
+            Matrix cannonRotation = Matrix.CreateRotationX(cannonRotationValue);
+            Matrix hatchRotation = Matrix.CreateRotationX(hatchRotationValue);
+
+            WheelRotation = time * 5;
+            SteerRotation = (float)Math.Sin(time * 0.75f) * 0.5f;
+
+            CannonRotation = (float)Math.Sin(time * 0.25f) * 0.333f - 0.333f;
+            HatchRotation = MathHelper.Clamp((float)Math.Sin(time * 2) * 2, -1, 0);
+
+            turretBone.Transform *= turretRotation * turretTransform;
+
+            //TurretRotation = (float)Math.Atan2(Camera.getCameraDirection().X - tankPosition.X, Camera.getCameraDirection().Z - tankPosition.Z);
+
+            leftBackWheelBone.Transform = wheelRotation * leftBackWheelTransform;
+            rightBackWheelBone.Transform = wheelRotation * rightBackWheelTransform;
+            leftFrontWheelBone.Transform = wheelRotation * leftFrontWheelTransform;
+            rightFrontWheelBone.Transform = wheelRotation * rightFrontWheelTransform;
+            leftSteerBone.Transform = steerRotation * leftSteerTransform;
+            rightSteerBone.Transform = steerRotation * rightSteerTransform;
+            turretBone.Transform = turretRotation * turretTransform;
+            cannonBone.Transform = cannonRotation * cannonTransform;
+            hatchBone.Transform = hatchRotation * hatchTransform;
+        }
+        private void LimitInBoundary()
+        {
+            float minBoundary = Boundary.GetBoundary() - scaleRatio;
+            if (tankPosition.X > minBoundary)
+                tankPosition.X = minBoundary;
+            if (tankPosition.X < -minBoundary)
+                tankPosition.X = -minBoundary;
+            if (tankPosition.Z > minBoundary)
+                tankPosition.Z = minBoundary;
+            if (tankPosition.Z < -minBoundary)
+                tankPosition.Z = -minBoundary;
+        }
+
+
+
     }
+
     class Grid
     {
         public int row;

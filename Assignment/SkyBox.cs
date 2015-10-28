@@ -29,7 +29,7 @@ namespace Assignment
             //movement.Y = 0;
 
             //return Matrix.CreateScale(2000f) * Matrix.CreateTranslation(movement);
-            return Matrix.CreateScale(2000f);
+            return Matrix.CreateScale(6000f);
         }
 
 
