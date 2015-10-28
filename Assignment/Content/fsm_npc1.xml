@@ -1,0 +1,26 @@
+<!--
+-
+Allowed states:
+- IDLE
+- PURSUE
+- EVADE
+
+Allowed conditions:
+- ALWAYSTRUE (this implements sequences)
+- PLAYER_POWERUPPILL
+- PLAYER_POWERUPPILL_EXPIRE
+- PLAYER_NEAR
+- PLAYER_FAR
+-->
+<fsm name="default" startState="IDLE">
+<state fromState="IDLE">
+<transition condition="PLAYER_NEAR" toState="PURSUE"/>
+</state>
+<state fromState="PURSUE">
+<transition condition="PLAYER_FAR" toState="IDLE"/>
+<transition condition="PLAYER_POWERUPPILL" toState="EVADE"/>
+</state>
+<state fromState="EVADE">
+<transition condition="PLAYER_FAR" toState="IDLE"/>
+</state>
+</fsm>

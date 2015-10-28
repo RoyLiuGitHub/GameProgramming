@@ -9,7 +9,6 @@ namespace Assignment
     {
         GraphicsDevice device;
         Camera camera;
-
         public MousePick(GraphicsDevice device, Camera camera)
         {
             this.device = device;
@@ -18,26 +17,17 @@ namespace Assignment
 
         public Vector3? GetCollisionPosition()
         {
-            MouseState mouseState = Mouse.GetState();
+            MouseState mousestate = Mouse.GetState();
 
-            Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0f);
-            Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1f);
+            Vector3 nearSource = new Vector3(mousestate.X, mousestate.Y, 0f);
+            Vector3 farSource = new Vector3(mousestate.X, mousestate.Y, 1f);
 
-            Vector3 nearPoint = device.Viewport.Unproject(
-                nearSource,
-                Camera.projection,
-                Camera.view,
-                Matrix.Identity
-                );
-            Vector3 farPoint = device.Viewport.Unproject(
-                farSource,
-                Camera.projection,
-                Camera.view,
-                Matrix.Identity
-                );
+            Vector3 nearPoint = device.Viewport.Unproject(nearSource, camera.projection, camera.view, Matrix.Identity);
+            Vector3 farPoint = device.Viewport.Unproject(farSource, camera.projection, camera.view, Matrix.Identity);
 
             Vector3 direction = farPoint - nearPoint;
             direction.Normalize();
+
             Ray pickRay = new Ray(nearPoint, direction);
             Nullable<float> result = pickRay.Intersects(new Plane(Vector3.Up, 0f));
 

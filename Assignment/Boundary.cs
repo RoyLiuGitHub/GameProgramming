@@ -3,30 +3,34 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Assignment
 {
-    class Boundary:BasicModel
+    class Boundary : BasicModel
     {
         Matrix translation = Matrix.Identity;
         private const float boundary = 2000f;
-        public Boundary(Model model, Vector3 position)
+        public Boundary(Model model, GraphicsDevice device, Camera camera, Vector3 postions)
             : base(model)
         {
-            translation = Matrix.CreateTranslation(position);
+            translation = Matrix.CreateTranslation(postions);
         }
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
+
         public override void Draw(GraphicsDevice device, Camera camera)
         {
             base.Draw(device, camera);
         }
-        protected override Matrix GetWorld()
+
+        public override Matrix getWorld()
         {
             return Matrix.CreateScale(2) * translation;
         }
+
         public static float GetBoundary()
         {
             return boundary;
+        }
+
+        public override Vector3 GetModelPosition()
+        {
+            return translation.Translation;
         }
     }
 }

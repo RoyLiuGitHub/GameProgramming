@@ -5,27 +5,33 @@ namespace Assignment
 {
     class SkyBox : BasicModel
     {
-        float skyBoxSize = 3000f;
         public SkyBox(Model model)
             : base(model)
         {
+
         }
-        public override void Update()
+
+        /*public override void update()
         {
-            base.Update();
-        }
+            base.update();
+        }*/
+
         public override void Draw(GraphicsDevice device, Camera camera)
         {
             device.SamplerStates[0] = SamplerState.LinearClamp;
             base.Draw(device, camera);
         }
-        protected override Matrix GetWorld()
+
+        public override Matrix getWorld()
         {
-            ////Make skyBox follow the camera
+            ////return Matrix.CreateScale(2000f);
             //Vector3 movement = Camera.cameraPosition;
             //movement.Y = 0;
-            //return Matrix.CreateScale(skyBoxSize) * Matrix.CreateTranslation(movement);
-            return Matrix.CreateScale(skyBoxSize);
+
+            //return Matrix.CreateScale(2000f) * Matrix.CreateTranslation(movement);
+            return Matrix.CreateScale(2000f);
         }
+
+
     }
 }
