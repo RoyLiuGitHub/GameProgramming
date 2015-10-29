@@ -236,7 +236,7 @@ namespace Assignment
 
         public override void update(GameTime gameTime)
         {
-            base.update(gameTime);
+            //base.update(gameTime);
             float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 100.0f;
             float rotationPerFrame = timeDifference * 1f;
             float movementPerFrame = timeDifference * 1f;
@@ -256,8 +256,21 @@ namespace Assignment
 
 
             float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
+            navigate(gameTime);
+
+
+
+            hatchBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * hatchTransform;
+            tankBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * tankTransform;
+
+            base.update(gameTime);
+
+        }
+
+        public void navigate(GameTime gameTime)
+        {
             if (Mouse.GetState().LeftButton == ButtonState.Pressed
-                && pickPosition.HasValue == true)
+    && pickPosition.HasValue == true)
             {
                 preMousePick = pickPosition;
                 bStart = false;
@@ -347,12 +360,6 @@ namespace Assignment
                 translation.Translation += speed;
                 v.Speed = 0;
             }
-
-            hatchBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * hatchTransform;
-            tankBone.Transform = Matrix.CreateRotationY(SteerRotationValue) * tankTransform;
-
-            base.update(gameTime);
-
         }
 
         public Point tankFindPath(Grid dp, Grid cp)
