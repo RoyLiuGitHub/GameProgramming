@@ -113,6 +113,9 @@ namespace Assignment
         //tank moving speed    fixed speed for WASD movement
         int WASDspeed = 10;
         float angle;
+        //WASD mode or Auto mode
+        bool isAuto;
+        bool isNavigate;
 
 
 
@@ -129,6 +132,8 @@ namespace Assignment
             array = map;
             row = r;
             col = c;
+
+            isNavigate = false;
 
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
             rightBackWheelBone = model.Bones["r_back_wheel_geo"];
@@ -208,6 +213,7 @@ namespace Assignment
 
         public override void update(GameTime gameTime)
         {
+            isAuto = true;
             preTankPosition = getCurrentPosition();
 
 
@@ -236,62 +242,28 @@ namespace Assignment
 
         public void navigate(GameTime gameTime)
         {
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed
-    && pickPosition.HasValue == true)
+            if (isAuto == true)
             {
-                preMousePick = pickPosition;
-                bStart = false;
-                Vector3? cp = new Vector3?(getCurrentPosition());
-                Grid currentPositionRowCol = getPointRowCol(cp);
-
-                pickPosition = mousePick.GetCollisionPosition();
-                Grid destinationPositionRowCol = getPointRowCol(pickPosition);
-                //Grid destinationPositionRowCol = getPointRowColTest();
-
-                initMap();
-                Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
-
-                if (p != null)
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed
+        && pickPosition.HasValue == true)
                 {
-                    Vector3 nextcood = getPointCood(p);
-                    destination = nextcood;
-                    //destination = pickPosition.Value;
+                    isNavigate = true;
+                    preMousePick = pickPosition;
+                    bStart = false;
+                    Vector3? cp = new Vector3?(getCurrentPosition());
+                    Grid currentPositionRowCol = getPointRowCol(cp);
 
-                    destination.Y = 0;
-                    distance = destination - getCurrentPosition();
+                    pickPosition = mousePick.GetCollisionPosition();
+                    Grid destinationPositionRowCol = getPointRowCol(pickPosition);
+                    //Grid destinationPositionRowCol = getPointRowColTest();
 
-                    direction = distance;
-                    direction.Normalize();
-                }
+                    initMap();
+                    Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
 
-            }
-
-            if (lGarr != null)
-            {
-                Vector3 tmpver3 = Vector3.Zero;
-                if (lGarr.Count >= 2)
-                {
-                    tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
-                }
-                else if (lGarr.Count == 1)
-                {
-                    tmpver3 = getPointCood(lGarr[0]);
-                }
-
-                //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
-                //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
-                if (Math.Abs(tmpver3.X - translation.Translation.X) < 20 && Math.Abs(tmpver3.Y - translation.Translation.Y) < 20)
-                {
-                    if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
-                    else if (lGarr.Count == 1)
+                    if (p != null)
                     {
-                        lGarr.RemoveAt(0);
-                        bStart = true;
-                    }
-
-                    if (lGarr.Count >= 2)
-                    {
-                        destination = getPointCood(lGarr[lGarr.Count - 2]);
+                        Vector3 nextcood = getPointCood(p);
+                        destination = nextcood;
                         //destination = pickPosition.Value;
 
                         destination.Y = 0;
@@ -300,78 +272,132 @@ namespace Assignment
                         direction = distance;
                         direction.Normalize();
                     }
+
                 }
 
-            }
-            if (bStart && preMousePick != Vector3.Zero)
-            {
-                destination = pickPosition.Value;
 
-                destination.Y = 0;
-                distance = destination - getCurrentPosition();
+                if (isNavigate == true)
+                { 
 
-                direction = distance;
-                direction.Normalize();
-            }
+                if (lGarr != null)
+                {
+                    Vector3 tmpver3 = Vector3.Zero;
+                    if (lGarr.Count >= 2)
+                    {
+                        tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
+                    }
+                    else if (lGarr.Count == 1)
+                    {
+                        tmpver3 = getPointCood(lGarr[0]);
+                    }
+
+                    //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
+                    //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
+                    if (Math.Abs(tmpver3.X - translation.Translation.X) < 20 && Math.Abs(tmpver3.Y - translation.Translation.Y) < 20)
+                    {
+                        if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
+                        else if (lGarr.Count == 1)
+                        {
+                            lGarr.RemoveAt(0);
+                            bStart = true;
+                        }
+
+                        if (lGarr.Count >= 2)
+                        {
+                            destination = getPointCood(lGarr[lGarr.Count - 2]);
+                            //destination = pickPosition.Value;
+
+                            destination.Y = 0;
+                            distance = destination - getCurrentPosition();
+
+                            direction = distance;
+                            direction.Normalize();
+                        }
+                    }
+
+                }
+                if (bStart && preMousePick != Vector3.Zero)
+                {
+                    destination = pickPosition.Value;
+
+                    destination.Y = 0;
+                    distance = destination - getCurrentPosition();
+
+                    direction = distance;
+                    direction.Normalize();
+                }
 
 
-            if (!inBrakeRange(destination))
-            {
-                v.increaseVelocity(gameTime);
-                speed = direction * v.Speed;
-                translation.Translation += speed;
+                if (!inBrakeRange(destination))
+                {
+                    v.increaseVelocity(gameTime);
+                    speed = direction * v.Speed;
+                    translation.Translation += speed;
 
-                angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
+                    angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
 
-                rotation = Matrix.CreateRotationY(angle);
-            }
-            else
-            {
-                speed = Vector3.Zero;
-                translation.Translation += speed;
-                v.Speed = 0;
+                    rotation = Matrix.CreateRotationY(angle);
 
-                //angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
+                    TankTranslation(gameTime);
+                }
+                else
+                {
+                    speed = Vector3.Zero;
+                    translation.Translation += speed;
+                    v.Speed = 0;
+                        isNavigate = false;
 
-                //rotation = Matrix.CreateRotationY(angle);
+                    //angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
+
+                        //rotation = Matrix.CreateRotationY(angle);
+                    }
+                }
             }
         }
         private void GetUserInput(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
+                isAuto = false;
+                isNavigate = false;
                 displacement = direction;
                 displacement.Y = 0;
                 translation.Translation += displacement * WASDspeed;
 
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                //TankTranslation(time);
+                TankTranslation(gameTime);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
+                isAuto = false;
+                isNavigate = false;
                 displacement = direction;
                 displacement.Y = 0;
                 translation.Translation -= displacement * WASDspeed;
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                //TankTranslation(time);
+                TankTranslation(gameTime);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
+                isAuto = false;
+                isNavigate = false;
                 direction = Vector3.Transform(direction, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / 50));
                 rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / 50);
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                //TankTranslation(time);
+                TankTranslation(gameTime);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
+                isAuto = false;
+                isNavigate = false;
                 direction = Vector3.Transform(direction, Matrix.CreateFromAxisAngle(Vector3.Up, -MathHelper.PiOver4 / 50));
                 rotation *= Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.PiOver4 / -50);
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
-                //TankTranslation(time);
+                TankTranslation(gameTime);
             }
         }
         private void TankTranslation(GameTime gameTime)
