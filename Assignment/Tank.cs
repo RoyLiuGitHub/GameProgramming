@@ -244,7 +244,7 @@ namespace Assignment
         {
             if (isAuto == true)
             {
-                if (Mouse.GetState().LeftButton == ButtonState.Pressed
+                if (Mouse.GetState().RightButton == ButtonState.Pressed
         && pickPosition.HasValue == true)
                 {
                     isNavigate = true;
