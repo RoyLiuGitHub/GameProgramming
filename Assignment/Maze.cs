@@ -25,19 +25,15 @@ namespace Assignment
             OpenList.Add(start);
             while (OpenList.Count != 0)
             {
-                //找出F值最小的点
                 var tempStart = OpenList.MinPoint();
                 OpenList.RemoveAt(0);
                 CloseList.Add(tempStart);
-                //找出它相邻的点
                 var surroundPoints = SurrroundPoints(tempStart, IsIgnoreCorner);
                 foreach (Point point in surroundPoints)
                 {
                     if (OpenList.Exists(point))
-                        //计算G值, 如果比原来的大, 就什么都不做, 否则设置它的父节点为当前点,并更新G和F
                         FoundPoint(tempStart, point);
                     else
-                        //如果它们不在开始列表里, 就加入, 并设置父节点,并计算GHF
                         NotFoundPoint(tempStart, end, point);
                 }
                 if (OpenList.Get(end) != null)
@@ -79,7 +75,6 @@ namespace Assignment
             return step * STEP;
         }
 
-        //获取某个点周围可以到达的点
         public List<Point> SurrroundPoints(Point point, bool IsIgnoreCorner)
         {
             var surroundPoints = new List<Point>(9);
@@ -93,7 +88,6 @@ namespace Assignment
             return surroundPoints;
         }
 
-        //在二维数组对应的位置不为障碍物
         private bool CanReach(int x, int y)
         {
             return MazeArray[x, y] == 0;
@@ -107,7 +101,6 @@ namespace Assignment
             {
                 if (Math.Abs(x - start.X) + Math.Abs(y - start.Y) == 1)
                     return true;
-                //如果是斜方向移动, 判断是否 "拌脚"
                 else
                 {
                     if (CanReach(Math.Abs(x - 1), y) && CanReach(x, Math.Abs(y - 1)))
@@ -119,7 +112,6 @@ namespace Assignment
         }
     }
 
-    //Point 类型
     public class Point
     {
         public Point ParentPoint { get; set; }
@@ -140,7 +132,6 @@ namespace Assignment
         }
     }
 
-    //对 List<Point> 的一些扩展方法
     public static class ListHelper
     {
         public static bool Exists(this List<Point> points, Point point)

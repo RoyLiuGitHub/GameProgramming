@@ -73,6 +73,9 @@ namespace Assignment
         List<Point> lGarr;
         Vector3? preMousePick;
         bool bStart;
+        int[,] array;
+        private int row;
+        private int col;
 
         public float WheelRotationValue
         {
@@ -121,7 +124,7 @@ namespace Assignment
         }
 
 
-        public Tank(Model model, GraphicsDevice device, Camera camera)
+        public Tank(Model model, GraphicsDevice device, Camera camera, int[,] map, int r, int c)
             : base(model)
         {
             pickPosition = Vector3.Zero;
@@ -156,6 +159,9 @@ namespace Assignment
 
             v = new Velocity();
             preMousePick = Vector3.Zero;
+            array = map;
+            row = r;
+            col = c;
         }
 
         struct WorldObject
@@ -208,7 +214,7 @@ namespace Assignment
 
         public void initMap()
         {
-            int[,] array = {
+            /*int[,] array = {
                            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -221,7 +227,9 @@ namespace Assignment
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-                           };
+                           };*/
+
+            
             lpath = new List<Point>();
             maze = new Maze(array);
         }
@@ -258,6 +266,7 @@ namespace Assignment
 
                 pickPosition = mousePick.GetCollisionPosition();
                 Grid destinationPositionRowCol = getPointRowCol(pickPosition);
+                //Grid destinationPositionRowCol = getPointRowColTest();
 
                 initMap();
                 Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
@@ -383,35 +392,72 @@ namespace Assignment
             return false;
         }
 
-        public Grid getPointRowCol(Vector3? pos)
+        private int leftBoundary = 1800;
+        public Grid getPointRowColTest()
         {
 
-            int row = 0;
-            int col = 0;
+            Grid retg = new Grid(32, 29);
+            Vector3 retv3 = getPointCoodTest(retg);
 
-            Console.WriteLine(pos.Value.X);
-            Console.WriteLine(pos.Value.Z);
-            for (int r = 0; r < 10; r++)
+            return retg;
+        }
+        public Vector3 getPointCoodTest(Grid rc)
+        {
+            Vector3 retv = new Vector3();
+
+            retv.Y = 0f;
+
+            for (int r = 0; r < row; r++)
             {
-                if (pos.Value.X < 1600 - 200 * r && pos.Value.X >= 1600 - 200 * (r + 1))
+                if (rc.row == r)
                 {
-                    row = r + 1;
+                    retv.Z = 2200 - 40 * r - 20;
+                    //retv.X = 1600 - 200 * r - 100;
                     break;
                 }
             }
 
-            for (int c = 0; c < 10; c++)
+            for (int c = 0; c < col; c++)
             {
-                if (pos.Value.Z >= -1000 + 200 * c && pos.Value.Z < -1000 + 200 * (c + 1))
+                if (rc.col == c)
                 {
-                    col = c + 1;
+                    retv.X = leftBoundary - 40 * c - 20;
+                    //retv.Z = -1000 + 200 * c + 100;
+                }
+            }
+            //Console.WriteLine("row--------------" + row);
+            //Console.WriteLine("col--------------" + col);
+
+            return retv;
+        }
+        public Grid getPointRowCol(Vector3? pos)
+        {
+
+            int retRow = 0;
+            int retCol = 0;
+            Console.WriteLine(pos.Value.X);
+            Console.WriteLine(pos.Value.Z);
+            for (int r = 0; r < row; r++)
+            {
+                if (pos.Value.Z < 2400 - 40 * r && pos.Value.Z >= 2400 - 40 * (r + 1))
+                {
+                    retRow = r + 1;
+                    break;
+                }
+            }
+
+            for (int c = 0; c < col; c++)
+            {
+                if (pos.Value.X < leftBoundary - 40 * c && pos.Value.X >= leftBoundary - 40 * (c + 1))
+                {
+                    retCol = c + 1;
                     break;
                 }
             }
             //Console.WriteLine("row--------------" + row);
             //Console.WriteLine("col--------------" + col);
 
-            Grid retg = new Grid(row, col);
+            Grid retg = new Grid(retRow, retCol);
             return retg;
         }
 
@@ -421,20 +467,22 @@ namespace Assignment
 
             retv.Y = 0f;
 
-            for (int r = 0; r < 10; r++)
+            for (int r = 0; r < row; r++)
             {
                 if (rc.X == r)
                 {
-                    retv.X = 1600 - 200 * r - 100;
+                    retv.Z = 2400 - 40 * r - 20;
+                    //retv.X = 1600 - 200 * r - 100;
                     break;
                 }
             }
 
-            for (int c = 0; c < 10; c++)
+            for (int c = 0; c < col; c++)
             {
                 if (rc.Y == c)
                 {
-                    retv.Z = -1000 + 200 * c + 100;
+                    retv.X = leftBoundary - 40 * c - 20;
+                    //retv.Z = -1000 + 200 * c + 100;
                 }
             }
             //Console.WriteLine("row--------------" + row);
@@ -470,7 +518,9 @@ namespace Assignment
         public override void setModelSpeed(float s)
         {
             //base.setModelSpeed(s);
-            wheelRotationValue = s;
+            //wheelRotationValue = s;
+            v.Speed = 0;
+            speed = Vector3.Zero;
         }
 
         public Vector3 getPosition()

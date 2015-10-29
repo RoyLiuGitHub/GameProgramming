@@ -72,6 +72,7 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Astra.cs" />
     <Compile Include="BasicModel.cs" />
     <Compile Include="Boundary.cs" />
     <Compile Include="Camera.cs" />
@@ -97,6 +98,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Content\fsm_npc1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Content\Map.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <Content Include="Content\Textures\Crosshair.png">

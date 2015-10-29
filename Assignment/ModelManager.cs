@@ -44,15 +44,17 @@ namespace Assignment
         private bool bEvade;
 
         List<string> lState;
-//kkkfdddfed
+
 
         MousePick mousepick;
         Vector3? pickposition;
-
-
+        private int boundaryWidth = 40;
+        private int leftBoundary = 1800;
+        private int rightBoundary = -2200;
 
         //DijkstraManager dij;
-        //AStra astra;
+        //Astra astra;
+        Astra instanceAstra;
 
         public ModelManager(Game game)
             : base(game)
@@ -64,7 +66,8 @@ namespace Assignment
             lState = new List<string>();
 
             //dij = new DijkstraManager();
-            //astra = new AStra();
+            instanceAstra = new Astra();
+
         }
 
 
@@ -84,7 +87,7 @@ namespace Assignment
             }
             curModel = lState[0];
 
-            ///astra.readMapInformation();
+            instanceAstra.readMapInformation();
 
             base.Initialize();
         }
@@ -110,8 +113,8 @@ namespace Assignment
             /*foreach (ModelMesh mesh in skyModel.Meshes)
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
                     meshPart.Effect = effect.Clone();*/
-
-            tankModel = new Tank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            int [,] a = instanceAstra.retMapInformation();
+            tankModel = new Tank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol());
             npcModel = new npcTank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(800, 0, 1000));
             npcModel1 = new npcTank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(600, 0, -300));
             models.Add(tankModel);
@@ -131,10 +134,10 @@ namespace Assignment
 
             //modelsObstacleFirm.Add(new boxtexture(Game.Content.Load<Model>(@"Box/box"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(400 + 100, 0, 600)));
 
-            modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300, 0, 100)));
+            //modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300, 0, 100)));
 
 
-            for (int ik = 0; ik < 70; ik++)
+            /*for (int ik = 0; ik < 70; ik++)
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300 + ik * 10, 0, 220)));
             }
@@ -142,31 +145,113 @@ namespace Assignment
             for (int ik = 0; ik < 50; ik++)
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(850, 0, -200 + ik * 10)));
-            }
+            }*/
 
+            //bottom line
             for (int ik = 0; ik < 100; ik++)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(-200 + ik * 20, 0, -1000)));
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(-2200 + ik * boundaryWidth, 0, -1000)));
             }
 
+            //left
             for (int ik = 0; ik < 100; ik++)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(1600, 0, ik * 20 - 1000)));
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary, 0, ik * boundaryWidth - 1000)));
+            }
+            
+            //one of 15
+            for (int ik = 0; ik < 20; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 20 * boundaryWidth, 0, 2200 - 20 * boundaryWidth - ik * boundaryWidth)));
             }
 
-            for (int ik = 0; ik < 110; ik++)
+
+            //five of 15
+            for (int ik = 0; ik < 10; ik++)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(ik * 20 - 400, 0, 1000)));
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth, 0, 2200 - 20 * boundaryWidth - ik * boundaryWidth)));
             }
+
+            //second five of 15
+            for (int ik = 0; ik < 10; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 39 * boundaryWidth, 0, 2200 - 30 * boundaryWidth - ik * 40)));
+            }
+
+            //first five of 15
+            for (int ik = 0; ik < 10; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth - ik * boundaryWidth, 0, 2200 - 20 * 40)));
+            }
+
+            //second strike five of 15
+            for (int ik = 0; ik < 10; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth - ik * boundaryWidth, 0, 2200 - 30 * 40)));
+            }
+
+            //third strike five of 15
+            for (int ik = 0; ik < 10; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth - ik * boundaryWidth, 0, 2200 - 40 * 40)));
+            }
+            //stones
+            for (int ik = 0; ik < 2; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 38 * boundaryWidth, 0, 2200 - 60 * boundaryWidth - ik * boundaryWidth)));
+            }
+            //top
             for (int ik = 0; ik < 100; ik++)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(-400, 0, ik * 20 - 1000)));
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(ik * 40 + rightBoundary, 0, 2200)));
+            }
+
+            //right
+            for (int ik = 0; ik < 100; ik++)
+            {
+                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(rightBoundary, 0, ik * 40 - 1000)));
             }
 
             base.LoadContent();
         }
 
+        public Vector3 getPointRowColTest(Grid g)
+        {
 
+            Grid retg = g;
+            Vector3 retv3 = getPointCoodTest(retg);
+
+            return retv3;
+        }
+        public Vector3 getPointCoodTest(Grid rc)
+        {
+            Vector3 retv = new Vector3();
+
+            retv.Y = 0f;
+
+            for (int r = 0; r < 85; r++)
+            {
+                if (rc.row == r)
+                {
+                    retv.Z = 2200 - 40 * r - 20;
+                    //retv.X = 1600 - 200 * r - 100;
+                    break;
+                }
+            }
+
+            for (int c = 0; c < 100; c++)
+            {
+                if (rc.col == c)
+                {
+                    retv.X = leftBoundary - 40 * c - 20;
+                    //retv.Z = -1000 + 200 * c + 100;
+                }
+            }
+            //Console.WriteLine("row--------------" + row);
+            //Console.WriteLine("col--------------" + col);
+
+            return retv;
+        }
 
 
         protected bool Collide()
@@ -205,8 +290,8 @@ namespace Assignment
                 }
                 else
                 {
-                    Console.WriteLine("collision!!!");
-                    stopPlayer();
+                    //Console.WriteLine("collision!!!");
+                    //stopPlayer();
                 }
                 model.update(gameTime);
             }
