@@ -89,7 +89,8 @@ namespace Assignment
         private Vector3 speed;
 
         Vector3? pickPosition;
-        Vector3 curPosition = Vector3.Zero;
+        //public static Vector3 tankPosition;
+        Vector3 tankPosition;
 
         const float round = 10f;
 
@@ -117,7 +118,7 @@ namespace Assignment
         bool isAuto;
         bool isNavigate;
 
-
+        private float scaleRatio = 100f;
 
 
 
@@ -125,7 +126,7 @@ namespace Assignment
             : base(model)
         {
             pickPosition = Vector3.Zero;
-            curPosition = Vector3.Zero;
+            tankPosition = Vector3.Zero;
             mousePick = new MousePick(device, camera);
             v = new Velocity();
             preMousePick = Vector3.Zero;
@@ -214,7 +215,7 @@ namespace Assignment
         public override void update(GameTime gameTime)
         {
             isAuto = true;
-            preTankPosition = getCurrentPosition();
+            preTankPosition = tankPosition;
 
 
             //base.update(gameTime);
@@ -231,7 +232,8 @@ namespace Assignment
             float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
             GetUserInput(gameTime);
             navigate(gameTime);
-
+            LimitInBoundary();
+            translation.Translation = tankPosition;
 
 
 
@@ -293,7 +295,7 @@ namespace Assignment
 
                     //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
                     //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
-                    if (Math.Abs(tmpver3.X - translation.Translation.X) < 20 && Math.Abs(tmpver3.Y - translation.Translation.Y) < 20)
+                    if (Math.Abs(tmpver3.X - tankPosition.X) < 20 && Math.Abs(tmpver3.Y - tankPosition.Y) < 20)
                     {
                         if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
                         else if (lGarr.Count == 1)
@@ -308,7 +310,7 @@ namespace Assignment
                             //destination = pickPosition.Value;
 
                             destination.Y = 0;
-                            distance = destination - getCurrentPosition();
+                            distance = destination - tankPosition;
 
                             direction = distance;
                             direction.Normalize();
@@ -321,7 +323,7 @@ namespace Assignment
                     destination = pickPosition.Value;
 
                     destination.Y = 0;
-                    distance = destination - getCurrentPosition();
+                    distance = destination - tankPosition;
 
                     direction = distance;
                     direction.Normalize();
@@ -332,7 +334,7 @@ namespace Assignment
                 {
                     v.increaseVelocity(gameTime);
                     speed = direction * v.Speed;
-                    translation.Translation += speed;
+                        tankPosition += speed;
 
                     angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
 
@@ -343,7 +345,7 @@ namespace Assignment
                 else
                 {
                     speed = Vector3.Zero;
-                    translation.Translation += speed;
+                        tankPosition += speed;
                     v.Speed = 0;
                         isNavigate = false;
 
@@ -362,7 +364,7 @@ namespace Assignment
                 isNavigate = false;
                 displacement = direction;
                 displacement.Y = 0;
-                translation.Translation += displacement * WASDspeed;
+                tankPosition += displacement * WASDspeed;
 
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
@@ -374,7 +376,7 @@ namespace Assignment
                 isNavigate = false;
                 displacement = direction;
                 displacement.Y = 0;
-                translation.Translation -= displacement * WASDspeed;
+                tankPosition -= displacement * WASDspeed;
 
                 float time = (float)gameTime.TotalGameTime.Milliseconds / 1000;
                 TankTranslation(gameTime);
@@ -430,6 +432,23 @@ namespace Assignment
             cannonBone.Transform = cannonRotation * cannonTransform;
             hatchBone.Transform = hatchRotation * hatchTransform;
         }
+        private void LimitInBoundary()
+        {
+            float x = tankPosition.X;
+            float z = tankPosition.Z;
+            Console.WriteLine("X is " + x  + "  z is "+ z);
+
+            //float minBoundary = Boundary.GetBoundary() - scaleRatio;
+            float minBoundary = Boundary.GetBoundary();
+            if (tankPosition.X > (1800))
+                tankPosition.X = 1800;
+            if (tankPosition.X < (-1900))
+                tankPosition.X = -1900;
+            if (tankPosition.Z > 1900)
+                tankPosition.Z = 1900;
+            if (tankPosition.Z < -900)
+                tankPosition.Z = -900;
+        }
 
         public Point tankFindPath(Grid dp, Grid cp)
         {
@@ -441,7 +460,7 @@ namespace Assignment
             //Console.WriteLine("Print path:");
             while (parent != null)
             {
-                Console.WriteLine(parent.X + ", " + parent.Y);
+                //Console.WriteLine(parent.X + ", " + parent.Y);
                 lGarr.Add(parent);
                 parent = parent.ParentPoint;
             }
@@ -511,8 +530,8 @@ namespace Assignment
 
             int retRow = 0;
             int retCol = 0;
-            Console.WriteLine(pos.Value.X);
-            Console.WriteLine(pos.Value.Z);
+            //Console.WriteLine(pos.Value.X);
+            //Console.WriteLine(pos.Value.Z);
             for (int r = 0; r < row; r++)
             {
                 if (pos.Value.Z < 2400 - 40 * r && pos.Value.Z >= 2400 - 40 * (r + 1))

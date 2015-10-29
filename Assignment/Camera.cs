@@ -19,6 +19,8 @@ namespace Assignment
         bool hasJump;
         bool hasFall;
 
+        Vector3 preCameraPosition;
+
         public Camera(Game game, Vector3 pos, Vector3 target, Vector3 up)
             : base(game)
         {
@@ -55,6 +57,17 @@ namespace Assignment
 
         public override void Update(GameTime gameTime)
         {
+            //preCameraPosition = cameraPosition;
+            //Vector3 temp = Tank.tankPosition;
+
+            ////Yaw rotation
+            //cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cameraUp,
+            //    (-MathHelper.PiOver4 / 70) *
+            //    (Mouse.GetState().X - prevMouseState.X)));
+
+
+            ////Reset prevMouseState
+            //prevMouseState = Mouse.GetState();
 
 
             CreateLookAt();
