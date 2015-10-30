@@ -38,12 +38,12 @@ namespace Assignment
         Vector3 player_dis_next = Vector3.Zero;
         Vector3 npc_dis;
 
-        SpriteFont font;
-        Vector2 fontPosition;
+        //SpriteFont font;
+        //Vector2 fontPosition;
         string text;
-        SpriteBatch spriteBatch;
-        GraphicsDeviceManager graphics;
-        MousePick mousePick;
+        //SpriteBatch spriteBatch;
+        //GraphicsDeviceManager graphics;
+        //MousePick mousePick;
 
         private bool bPursue;
         private bool bEvade;
@@ -78,6 +78,18 @@ namespace Assignment
         //list of LevelInfo objects
         List<LevelInfo> levelInfoList = new List<LevelInfo>();
 
+        // For font
+        SpriteBatch spriteBatch;
+        SpriteFont font;
+        Vector2 scorePosition = new Vector2(400, 0);
+        Vector2 timeLeftPosition = new Vector2(800, 0);
+        Vector2 levelPosition = new Vector2(10, 0);
+        Vector2 gameOverPosition = new Vector2(400, 300);
+
+        // For time counter and score
+        string score;
+        string timeUsed;
+
         //DijkstraManager dij;
         //Astra astra;
         Astra instanceAstra;
@@ -95,7 +107,7 @@ namespace Assignment
             instanceAstra = new Astra();
 
             // Initialize game levels
-            levelInfoList.Add(new LevelInfo(1000, 3000, 1, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(1000, 3000, 2, 2, 6, 10));
             levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
             levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
             levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
@@ -119,9 +131,9 @@ namespace Assignment
             //Set initial spawn time
             SetNextSpawnTime();
 
-            spriteBatch = new SpriteBatch(((Game1)Game).GraphicsDevice);
-            font = Game.Content.Load<SpriteFont>(@"Arial");
-            fontPosition = new Vector2(((Game1)Game).GraphicsDevice.Viewport.Width / 2, ((Game1)Game).GraphicsDevice.Viewport.Height / 2);
+            //spriteBatch = new SpriteBatch(((Game1)Game).GraphicsDevice);
+            //font = Game.Content.Load<SpriteFont>(@"Arial");
+            //fontPosition = new Vector2(((Game1)Game).GraphicsDevice.Viewport.Width / 2, ((Game1)Game).GraphicsDevice.Viewport.Height / 2);
 
             text = "FSM: \n";
 
@@ -168,6 +180,10 @@ namespace Assignment
             addBoundary();
 
 
+            //Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            font = Game.Content.Load<SpriteFont>(@"Fonts\Arial");
+
             base.LoadContent();
         }
 
@@ -187,6 +203,8 @@ namespace Assignment
                 model.update(gameTime);
             }
 
+            UpdateShots(gameTime);
+
             for (int i = 0; i < enemies.Count; ++i)
             {
                 enemies[i].update(gameTime);
@@ -194,7 +212,10 @@ namespace Assignment
             // Check to see if it's time to spawn
             CheckToSpawnEnemy(gameTime);
 
-            UpdateShots(gameTime);
+            PlayInfo.CalculateTime((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            //update time and score
+            score = PlayInfo.GetScore().ToString();
+            timeUsed = PlayInfo.getTime().ToString("0.0");
 
 
 
@@ -228,20 +249,29 @@ namespace Assignment
             {
                 e.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
             }
-            /*spriteBatch.Begin();
-            Vector2 fontOrigin = font.MeasureString(text) / 2;
-            spriteBatch.DrawString(
-                font,
-                text,
-                fontPosition,
-                Color.Red,
-                0,
-                fontOrigin,
-                0.0f,
-                SpriteEffects.None,
-                0f);
-            spriteBatch.End();*/
 
+            ///Draw score and time
+
+            spriteBatch.Begin();
+            //spriteBatch.DrawString(font, "Hello world", new Vector2(120, 120), Color.Orchid);
+
+            spriteBatch.DrawString(font, "Level: " + currentLevel + 1, levelPosition, Color.YellowGreen);
+            spriteBatch.DrawString(font, "Score: " + score + "/" + levelInfoList[currentLevel].numberEnemies, scorePosition, Color.YellowGreen);
+            spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
+
+
+
+            if (LevelUp())
+            {
+                spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
+            }
+
+
+            spriteBatch.End();
+
+            //Reset device states
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             base.Draw(gameTime);
         }
@@ -435,8 +465,8 @@ for (int ik = 0; ik < 50; ik++)
                             enemies.RemoveAt(j);
                             shots.RemoveAt(i);
                             i -= 1;
-                            ////get score
-                            //PlayInfo.AddScore(1);
+                            //get score
+                            PlayInfo.AddScore(1);
                             break;
                         }
                     }
@@ -493,6 +523,19 @@ for (int ik = 0; ik < 50; ik++)
                 {
                     SpawnEnemy();
                 }
+            }
+        }
+
+        //Test game status
+        private bool LevelUp()
+        {
+            if (PlayInfo.GetScore() == levelInfoList[currentLevel].numberEnemies)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
