@@ -125,6 +125,7 @@ namespace Assignment
         }
         protected void FireShots(GameTime gameTime)
         {
+            Vector3 temp = Vector3.Zero;
             if (shotCountdown <= 0)
             {
                 // Did player press space bar or left mouse button?
@@ -133,6 +134,16 @@ namespace Assignment
                 {
                     bulletPosition = Tank.tankPosition;
                     bulletDirection = Tank.turretDirection;
+
+
+                    ////Make sure bullet leave the tank before check collision
+                    //temp = bulletDirection;
+                    //temp.Normalize();
+                    //temp *= 500;
+                
+                    //bulletPosition += temp;
+
+
                     // Add a shot to the model manager
                     modelManager.AddShot(
                        bulletPosition,

@@ -19,6 +19,7 @@ namespace Assignment
 
         //bullet  change to public for shots count
         List<BasicModel> shots = new List<BasicModel>();
+        List<BasicModel> enemyShots = new List<BasicModel>();
 
         List<BasicModel> enemies = new List<BasicModel>();
 
@@ -91,6 +92,16 @@ namespace Assignment
         string score;
         string timeUsed;
         string life;
+
+
+        //bullet profile
+        private const float shotSpeed = 0.01f;
+        private const int shotDelay = 2700;
+        int shotCountdown = 0;
+        public Vector3 bulletPosition = Vector3.Zero;
+        public Vector3 bulletDirection = Vector3.Zero;
+        Vector3 temp = Vector3.Zero;
+
 
         //DijkstraManager dij;
         //Astra astra;
@@ -216,6 +227,8 @@ namespace Assignment
             }
 
             UpdateShots(gameTime);
+            enemyShot(gameTime);
+            UpdateEnemyShots(gameTime);
 
             for (int i = 0; i < enemies.Count; ++i)
             {
@@ -257,6 +270,10 @@ namespace Assignment
             foreach (BasicModel s in shots)
             {
                 s.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            }
+            foreach (BasicModel s1 in enemyShots)
+            {
+                s1.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
             }
             foreach (BasicModel e in enemies)
             {
@@ -453,7 +470,6 @@ for (int ik = 0; ik < 50; ik++)
         }
         public void UpdateShots(GameTime gameTime)
         {
-            bool destoryed = false;
             // Loop through shots
             for (int i = 0; i < shots.Count; ++i)
             {
@@ -467,7 +483,6 @@ for (int ik = 0; ik < 50; ik++)
                 {
                     shots.RemoveAt(i);
                     i -= 1;
-                    destoryed = true;
                 }
                 else
                 {
@@ -484,29 +499,28 @@ for (int ik = 0; ik < 50; ik++)
                             enemies.RemoveAt(j);
                             shots.RemoveAt(i);
                             i -= 1;
-                            destoryed = true;
                             //get score
                             PlayInfo.AddScore(1);
                             break;
                         }
                     }
 
-                    if (destoryed == false)
-                    {
-                        if (shots[i].CollidesWith(
-                            shots[i].model,
-                            (shots[i].getWorld()),
-                            tankModel.model,
-                            (tankModel.getWorld())))
-                        {
-                            // Collision! remove  the shot and reduce the life
-                            shots.RemoveAt(i);
-                            i -= 1;
-                            //get score
-                            PlayInfo.reduceLife(1);
-                            break;
-                        }
-                    }
+                    //if (destoryed == false)
+                    //{
+                    //    if (shots[i].CollidesWith(
+                    //        shots[i].model,
+                    //        (shots[i].getWorld()),
+                    //        tankModel.model,
+                    //        (tankModel.getWorld())))
+                    //    {
+                    //        // Collision! remove  the shot and reduce the life
+                    //        shots.RemoveAt(i);
+                    //        i -= 1;
+                    //        //get score
+                    //        PlayInfo.reduceLife(1);
+                    //        break;
+                    //    }
+                    //}
 
                 }
             }
@@ -586,6 +600,98 @@ for (int ik = 0; ik < 50; ik++)
             else
             {
                 return false;
+            }
+        }
+
+        public void enemyShot(GameTime gameTime)
+        {
+            foreach (BasicModel model in enemies)
+            {
+                Vector3 tempPosition = model.GetModelPosition();
+                Vector3 tempDirection = model.GetTankDirection();
+                //Vector3 tempDirection = Tank.
+                enemyFireShots(gameTime, tempPosition, tempDirection);
+            }
+        }
+
+
+        protected void enemyFireShots(GameTime gameTime, Vector3 bulletPosition, Vector3 bulletDirection)
+        {
+
+            if (shotCountdown <= 0)
+            {
+                // Did player press space bar or left mouse button?
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+
+                {
+                    //bulletPosition = Tank.tankPosition;
+                    //this.bulletPosition = bulletPosition;
+                    //this.bulletDirection = bulletDirection;
+                    this.bulletDirection = tankModel.getPosition()- bulletPosition;
+                    bulletDirection.Y = 20;
+                    //this.bulletDirection = new Vector3(1,0,1);
+                    //bulletDirection.Normalize();
+
+
+                    // Add a shot to the model manager
+                    AddEnemyShot(
+                       bulletPosition,
+                        bulletDirection * shotSpeed);
+
+                    //modelManager.playShotSound();
+
+                    // Reset the shot countdown
+                    shotCountdown = shotDelay;
+                }
+            }
+            else
+                shotCountdown -= gameTime.ElapsedGameTime.Milliseconds;
+        }
+        public void AddEnemyShot(Vector3 position, Vector3 direction)
+        {
+
+            direction.Y = 0;
+            position.Y = 30;    //bullet heigth
+            enemyShots.Add(new Bullet(
+                //Game.Content.Load<Model>(@"Models\Bullet\ammo"),
+                Game.Content.Load<Model>(@"Models\Bullet\bullet"),
+                position, direction * 50, 0, 0, 0));
+        }
+        public void UpdateEnemyShots(GameTime gameTime)
+        {
+            // Loop through shots
+            for (int i = 0; i < enemyShots.Count; ++i)
+            {
+                // Update each shot
+                enemyShots[i].update(gameTime);
+
+                Vector3 range = enemyShots[i].getWorld().Translation;
+                if (range.X > maxX || range.X < minX
+                    || range.Y > maxY || range.Y < minY
+                    || range.Z > maxZ || range.Z < minZ)
+                {
+                    enemyShots.RemoveAt(i);
+                    i -= 1;
+                }
+                else
+                {
+
+                    if (enemyShots[i].CollidesWith(
+                        enemyShots[i].model,
+                        (enemyShots[i].getWorld()),
+                        tankModel.model,
+                        (tankModel.getWorld())))
+                    {
+                        // Collision! remove  the shot and reduce the life
+                        enemyShots.RemoveAt(i);
+                        i -= 1;
+                        //get score
+                        PlayInfo.reduceLife(1);
+                        break;
+                    }
+
+
+                }
             }
         }
 

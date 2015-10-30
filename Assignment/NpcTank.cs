@@ -193,6 +193,12 @@ namespace Assignment
             //For bullet direction
             turretDirection = Vector3.Transform(tankPosition, turretBone.Transform);
 
+
+            //turretDirection.X = preTankPosition.X - tankPosition.X;
+            //turretDirection.Z = preTankPosition.Z - tankPosition.Z;
+
+            //turretDirection = Matrix.Invert(rotation).Translation;
+
             base.update(gameTime);
 
         }
@@ -529,9 +535,14 @@ namespace Assignment
             speed = Vector3.Zero;
         }
 
-        public Vector3 getPosition()
+        public override Vector3 GetModelPosition()
         {
             return translation.Translation;
+        }
+
+        public override Vector3 GetTankDirection()
+        {
+            return turretDirection;
         }
 
     }
