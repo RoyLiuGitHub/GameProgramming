@@ -639,7 +639,7 @@ namespace Assignment
 
         public override void stop()
         {
-            translation.Translation = preTankPosition;
+            tankPosition = preTankPosition;
             v.Speed = 0;
             speed = Vector3.Zero;
         }
