@@ -420,27 +420,27 @@ for (int ik = 0; ik < 50; ik++)
                     shots.RemoveAt(i);
                     i -= 1;
                 }
-                //else
-                //{
-                //    for (int j = 0; j < npcModel.Count; ++j)
-                //    {
-                //        //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
-                //        if (shots[i].CollidesWith(
-                //            shots[i].model,
-                //            (shots[i].getWorld()),
-                //            npcModel[j].model,
-                //            (npcModel[j].GetTankPosition())))
-                //        {
-                //            // Collision! remove the tank and the shot.
-                //            npcModel.RemoveAt(j);
-                //            shots.RemoveAt(i);
-                //            i -= 1;
-                //            ////get score
-                //            //PlayInfo.AddScore(1);
-                //            break;
-                //        }
-                //    }
-                //}
+                else
+                {
+                    for (int j = 0; j < enemies.Count; ++j)
+                    {
+                        //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
+                        if (shots[i].CollidesWith(
+                            shots[i].model,
+                            (shots[i].getWorld()),
+                            enemies[j].model,
+                            (enemies[j].getWorld())))
+                        {
+                            // Collision! remove the tank and the shot.
+                            enemies.RemoveAt(j);
+                            shots.RemoveAt(i);
+                            i -= 1;
+                            ////get score
+                            //PlayInfo.AddScore(1);
+                            break;
+                        }
+                    }
+                }
             }
         }
         private void SetNextSpawnTime()
