@@ -49,6 +49,7 @@ namespace Assignment
         float hatchRotationValue;
 
         int reNavigateTime = 0;
+        bool isPURSUE;
 
         SteerMode steerMode;
 
@@ -215,11 +216,39 @@ namespace Assignment
 
         }
 
-        public void navigate(GameTime gameTime)
+        //public void selectMode(GameTime gameTime)
+        //{
+        //    //PURSUE
+        //    if ()
+        //    {
+        //        isPURSUE = true;
+        //        navigate(gameTime, isPURSUE);
+        //        LimitInBoundary();
+        //        translation.Translation = tankPosition;
+        //    }
+        //    //EVADE
+        //    else if ()
+        //    {
+        //        isPURSUE = false;
+        //        navigate(gameTime, isPURSUE);
+        //        LimitInBoundary();
+        //        translation.Translation = tankPosition;
+        //    }
+        //    //IDLE
+        //    else
+        //    { }
+        //}
+
+        //public void navigate(GameTime gameTime, bool PURSUE)
+                    public void navigate(GameTime gameTime)
         {
 
                 if (reNavigateTime==0)
                 {
+                //if (PURSUE == true)
+                //{
+                //}
+
                     isNavigate = true;
                     preMousePick = pickPosition;
                     bStart = false;

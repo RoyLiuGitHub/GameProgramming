@@ -84,6 +84,13 @@ namespace Assignment
             return direction;
         }
 
+        public bool getIsAuto()
+        {
+            return isAuto;
+        }
+
+
+
         private const float MaxTurretAngle = 1.0f;
         private const float MinTurretAngle = -1.0f;
 
@@ -628,6 +635,13 @@ namespace Assignment
         public Vector3 getPosition()
         {
             return translation.Translation;
+        }
+
+        public override void stop()
+        {
+            translation.Translation = preTankPosition;
+            v.Speed = 0;
+            speed = Vector3.Zero;
         }
     }
     class Grid

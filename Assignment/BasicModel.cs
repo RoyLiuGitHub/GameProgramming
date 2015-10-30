@@ -117,5 +117,10 @@ namespace Assignment
         {
             return Matrix.Identity;
         }
+
+        public virtual void stop()
+        {
+            
+        }
     }
 }

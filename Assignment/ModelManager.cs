@@ -212,18 +212,25 @@ namespace Assignment
 
         public override void Update(GameTime gameTime)
         {
-            foreach (BasicModel model in models)
-            {
-                if (!Collide())
+            
+                foreach (BasicModel model in models)
                 {
-                    //Console.WriteLine("no collision~~~~");
-                }
-                else
+                if (tankModel.getIsAuto() == false)
                 {
-                    //Console.WriteLine("collision!!!");
-                    //stopPlayer();
+                    if (!Collide())
+                    {
+                        //Console.WriteLine("no collision~~~~");
+                    }
+                    else
+                    {
+                        //Console.WriteLine("collision!!!");
+                        //stopPlayer();
+                        model.stop();
+                    }
                 }
                 model.update(gameTime);
+               
+
             }
 
             UpdateShots(gameTime);
@@ -435,6 +442,17 @@ for (int ik = 0; ik < 50; ik++)
                 if (modelsObstacleFirm[i].CollidesWith(
                                 modelsObstacleFirm[i].model,
                                 (modelsObstacleFirm[i].getWorld()),
+                                tankModel.model,
+                                (tankModel.getWorld())))
+                {
+                    return true;
+                }
+            }
+            for (int i = enemies.Count - 1; i >= 0; i--)
+            {
+                if (enemies[i].CollidesWith(
+                                enemies[i].model,
+                                (enemies[i].getWorld()),
                                 tankModel.model,
                                 (tankModel.getWorld())))
                 {
