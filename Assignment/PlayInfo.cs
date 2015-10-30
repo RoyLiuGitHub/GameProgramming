@@ -9,6 +9,7 @@ namespace Assignment
     {
         static int score;
         static float timeUsed;
+        static int life;
 
 
         public static void AddScore(int gain)
@@ -19,6 +20,20 @@ namespace Assignment
         {
             return score;
         }
+
+        public static void initLife(int initLife)
+        {
+            life= initLife;
+        }
+        public static void reduceLife(int loss)
+        {
+            life -= loss;
+        }
+        public static int GetLife()
+        {
+            return life;
+        }
+
 
         public static void CalculateTime(float time)
         {

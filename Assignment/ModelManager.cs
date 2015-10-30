@@ -85,10 +85,12 @@ namespace Assignment
         Vector2 timeLeftPosition = new Vector2(800, 0);
         Vector2 levelPosition = new Vector2(10, 0);
         Vector2 gameOverPosition = new Vector2(400, 300);
+        Vector2 lifePosition = new Vector2(100, 100);
 
         // For time counter and score
         string score;
         string timeUsed;
+        string life;
 
         //DijkstraManager dij;
         //Astra astra;
@@ -107,7 +109,7 @@ namespace Assignment
             instanceAstra = new Astra();
 
             // Initialize game levels
-            levelInfoList.Add(new LevelInfo(1000, 3000, 2, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(1000, 3000, 1, 2, 6, 10));
             levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
             levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
             levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
@@ -146,6 +148,7 @@ namespace Assignment
             curModel = lState[0];
 
             instanceAstra.readMapInformation();
+            PlayInfo.initLife(3);
 
             base.Initialize();
         }
@@ -184,6 +187,15 @@ namespace Assignment
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Game.Content.Load<SpriteFont>(@"Fonts\Arial");
 
+
+
+    //        shots.Add(new Bullet(
+    ////Game.Content.Load<Model>(@"Models\Bullet\ammo"),
+    //Game.Content.Load<Model>(@"Models\Bullet\bullet"),
+    //new Vector3(0,0,0), Vector3.Zero, 0, 0, 0));
+
+
+
             base.LoadContent();
         }
 
@@ -215,6 +227,7 @@ namespace Assignment
             PlayInfo.CalculateTime((float)gameTime.ElapsedGameTime.TotalMilliseconds);
             //update time and score
             score = PlayInfo.GetScore().ToString();
+            life = PlayInfo.GetLife().ToString();
             timeUsed = PlayInfo.getTime().ToString("0.0");
 
 
@@ -258,12 +271,17 @@ namespace Assignment
             spriteBatch.DrawString(font, "Level: " + currentLevel + 1, levelPosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Score: " + score + "/" + levelInfoList[currentLevel].numberEnemies, scorePosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
+            spriteBatch.DrawString(font, "Life: " + life, lifePosition, Color.YellowGreen);
 
 
 
             if (LevelUp())
             {
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
+            }
+            if (isDied())
+            {
+                spriteBatch.DrawString(font, "You are died!", gameOverPosition, Color.Red);
             }
 
 
@@ -435,7 +453,7 @@ for (int ik = 0; ik < 50; ik++)
         }
         public void UpdateShots(GameTime gameTime)
         {
-
+            bool destoryed = false;
             // Loop through shots
             for (int i = 0; i < shots.Count; ++i)
             {
@@ -449,6 +467,7 @@ for (int ik = 0; ik < 50; ik++)
                 {
                     shots.RemoveAt(i);
                     i -= 1;
+                    destoryed = true;
                 }
                 else
                 {
@@ -465,11 +484,30 @@ for (int ik = 0; ik < 50; ik++)
                             enemies.RemoveAt(j);
                             shots.RemoveAt(i);
                             i -= 1;
+                            destoryed = true;
                             //get score
                             PlayInfo.AddScore(1);
                             break;
                         }
                     }
+
+                    if (destoryed == false)
+                    {
+                        if (shots[i].CollidesWith(
+                            shots[i].model,
+                            (shots[i].getWorld()),
+                            tankModel.model,
+                            (tankModel.getWorld())))
+                        {
+                            // Collision! remove  the shot and reduce the life
+                            shots.RemoveAt(i);
+                            i -= 1;
+                            //get score
+                            PlayInfo.reduceLife(1);
+                            break;
+                        }
+                    }
+
                 }
             }
         }
@@ -530,6 +568,18 @@ for (int ik = 0; ik < 50; ik++)
         private bool LevelUp()
         {
             if (PlayInfo.GetScore() == levelInfoList[currentLevel].numberEnemies)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool isDied()
+        {
+            if (PlayInfo.GetLife() == 0)
             {
                 return true;
             }
