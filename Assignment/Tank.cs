@@ -79,6 +79,11 @@ namespace Assignment
             set { hatchRotationValue = value; }
         }
 
+        public Vector3 getTankDirection()
+        {
+            return direction;
+        }
+
         private const float MaxTurretAngle = 1.0f;
         private const float MinTurretAngle = -1.0f;
 
@@ -89,8 +94,9 @@ namespace Assignment
         private Vector3 speed;
 
         Vector3? pickPosition;
-        //public static Vector3 tankPosition;
-        Vector3 tankPosition;
+        public static Vector3 tankPosition;
+        //Vector3 tankPosition;
+        public static Vector3 turretDirection;
 
         const float round = 10f;
 
@@ -235,7 +241,8 @@ namespace Assignment
             LimitInBoundary();
             translation.Translation = tankPosition;
 
-
+            //For bullet direction
+            turretDirection = Vector3.Transform(tankPosition, turretBone.Transform);
 
 
             base.update(gameTime);

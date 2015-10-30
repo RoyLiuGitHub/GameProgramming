@@ -21,11 +21,29 @@ namespace Assignment
         public GraphicsDevice device { get; protected set; }
         public Camera camera { get; protected set; }
 
+
+        //bullet profile
+        private const float shotSpeed = 0.01f;
+        private const int shotDelay = 2700;
+        int shotCountdown = 0;
+        public Vector3 bulletPosition = Vector3.Zero;
+        public Vector3 bulletDirection = Vector3.Zero;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            //graphics.IsFullScreen = true;
+
+            //random number
+            rnd = new Random();
+
+            //Resolution
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+#if !DEBUG
+                graphics.IsFullScreen = true;
+#endif
         }
 
         /// <summary>
@@ -87,6 +105,9 @@ namespace Assignment
 
             // TODO: Add your update logic here
 
+            // See if the player has fired a shot
+            FireShots(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -102,5 +123,30 @@ namespace Assignment
 
             base.Draw(gameTime);
         }
+        protected void FireShots(GameTime gameTime)
+        {
+            if (shotCountdown <= 0)
+            {
+                // Did player press space bar or left mouse button?
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+
+                {
+                    bulletPosition = Tank.tankPosition;
+                    bulletDirection = Tank.turretDirection;
+                    // Add a shot to the model manager
+                    modelManager.AddShot(
+                       bulletPosition,
+                        bulletDirection * shotSpeed);
+
+                    //modelManager.playShotSound();
+
+                    // Reset the shot countdown
+                    shotCountdown = shotDelay;
+                }
+            }
+            else
+                shotCountdown -= gameTime.ElapsedGameTime.Milliseconds;
+        }
+        public Random rnd { get; protected set; }
     }
 }

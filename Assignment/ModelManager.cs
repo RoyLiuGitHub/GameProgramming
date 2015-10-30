@@ -17,9 +17,14 @@ namespace Assignment
         List<BasicModel> modelsObstacleFirm = new List<BasicModel>();
         List<BasicModel> hampers = new List<BasicModel>();
 
+        //bullet  change to public for shots count
+        List<BasicModel> shots = new List<BasicModel>();
+
+        List<BasicModel> enemies = new List<BasicModel>();
+
         Tank tankModel;
-        npcTank npcModel;
-        npcTank npcModel1;
+        //NpcTank npcModel;
+        //NpcTank npcModel1;
 
         int[,] graph_max_other;
         int[,] graph_max_player;
@@ -52,6 +57,27 @@ namespace Assignment
         private int leftBoundary = 1800;
         private int rightBoundary = -2200;
 
+        private const int maxX = 3000;
+        private const int minX = -3000;
+        private const int maxY = 1000;
+        private const int minY = -1000;
+        private const int maxZ = 3000;
+        private const int minZ = -3000;
+
+        //Enemy spawn variables
+        Vector3 maxSpawnLocation = new Vector3(500, 0, 500);
+        int nextSpawnTime = 0;
+        int timeSinceLastSpawn = 0;
+        float maxRollAngle = MathHelper.Pi / 40;
+        //Enemy count
+        int enemiesThisLevel = 0;
+        //Misses variables
+        int missedThisLevel = 0;
+        //Current level
+        int currentLevel = 0;
+        //list of LevelInfo objects
+        List<LevelInfo> levelInfoList = new List<LevelInfo>();
+
         //DijkstraManager dij;
         //Astra astra;
         Astra instanceAstra;
@@ -68,11 +94,31 @@ namespace Assignment
             //dij = new DijkstraManager();
             instanceAstra = new Astra();
 
+            // Initialize game levels
+            levelInfoList.Add(new LevelInfo(1000, 3000, 1, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
+            levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
+            levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
+            levelInfoList.Add(new LevelInfo(600, 2200, 5, 3, 7, 6));
+            levelInfoList.Add(new LevelInfo(500, 2000, 6, 3, 7, 5));
+            levelInfoList.Add(new LevelInfo(400, 1800, 7, 4, 7, 4));
+            levelInfoList.Add(new LevelInfo(300, 1600, 8, 4, 8, 3));
+            levelInfoList.Add(new LevelInfo(200, 1400, 9, 5, 8, 2));
+            levelInfoList.Add(new LevelInfo(100, 1200, 10, 5, 9, 1));
+            levelInfoList.Add(new LevelInfo(50, 1000, 11, 6, 9, 0));
+            levelInfoList.Add(new LevelInfo(50, 800, 12, 6, 9, 0));
+            levelInfoList.Add(new LevelInfo(50, 600, 13, 8, 10, 0));
+            levelInfoList.Add(new LevelInfo(25, 400, 14, 8, 10, 0));
+            levelInfoList.Add(new LevelInfo(0, 200, 15, 18, 20, 0));
+
         }
 
 
         public override void Initialize()
         {
+            //Set initial spawn time
+            SetNextSpawnTime();
+
             spriteBatch = new SpriteBatch(((Game1)Game).GraphicsDevice);
             font = Game.Content.Load<SpriteFont>(@"Arial");
             fontPosition = new Vector2(((Game1)Game).GraphicsDevice.Viewport.Width / 2, ((Game1)Game).GraphicsDevice.Viewport.Height / 2);
@@ -115,37 +161,102 @@ namespace Assignment
                     meshPart.Effect = effect.Clone();*/
             int [,] a = instanceAstra.retMapInformation();
             tankModel = new Tank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol());
-            npcModel = new npcTank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(800, 0, 1000));
-            npcModel1 = new npcTank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(600, 0, -300));
+            
             models.Add(tankModel);
 
-            //Vector2 curPos = new Vector2(8, 5);
-            //Vector2 destinationPos = new Vector2(1, 7);
-
-            //dij.readMapInformation(curPos);
-            //Pos111 p = new Pos111(8,5);
-            //astra.findpath(p);
-            //models.Add(npcModel);
-            //models.Add(npcModel1);
-            //npcModel.AddTarget(tankModel);
-            //models.Add(new Box(Game.Content.Load<Model>(@"Box/box"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera));
-            //models.Add(new Box(Game.Content.Load<Model>(@"boxtexture/boxtexture"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera));
-            //modelsObstacle.Add(new Box(Game.Content.Load<Model>(@"Box/box"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera));
-
-            //modelsObstacleFirm.Add(new boxtexture(Game.Content.Load<Model>(@"Box/box"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(400 + 100, 0, 600)));
-
-            //modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300, 0, 100)));
+            
+            addBoundary();
 
 
-            /*for (int ik = 0; ik < 70; ik++)
+            base.LoadContent();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            foreach (BasicModel model in models)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300 + ik * 10, 0, 220)));
+                if (!Collide())
+                {
+                    //Console.WriteLine("no collision~~~~");
+                }
+                else
+                {
+                    //Console.WriteLine("collision!!!");
+                    //stopPlayer();
+                }
+                model.update(gameTime);
             }
 
-            for (int ik = 0; ik < 50; ik++)
+            for (int i = 0; i < enemies.Count; ++i)
             {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(850, 0, -200 + ik * 10)));
-            }*/
+                enemies[i].update(gameTime);
+            }
+            // Check to see if it's time to spawn
+            CheckToSpawnEnemy(gameTime);
+
+            UpdateShots(gameTime);
+
+
+
+            base.Update(gameTime);
+        }
+
+
+
+        public override void Draw(GameTime gameTime)
+        {
+
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            foreach (BasicModel model in models)
+            {
+                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
+            }
+
+            foreach (BasicModel model in modelsObstacle)
+            {
+                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
+            }
+            foreach (BasicModel model in modelsObstacleFirm)
+            {
+                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
+            }
+            foreach (BasicModel s in shots)
+            {
+                s.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            }
+            foreach (BasicModel e in enemies)
+            {
+                e.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            }
+            /*spriteBatch.Begin();
+            Vector2 fontOrigin = font.MeasureString(text) / 2;
+            spriteBatch.DrawString(
+                font,
+                text,
+                fontPosition,
+                Color.Red,
+                0,
+                fontOrigin,
+                0.0f,
+                SpriteEffects.None,
+                0f);
+            spriteBatch.End();*/
+
+
+            base.Draw(gameTime);
+        }
+
+        public void addBoundary()
+        {
+            /*for (int ik = 0; ik < 70; ik++)
+{
+    modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300 + ik * 10, 0, 220)));
+}
+
+for (int ik = 0; ik < 50; ik++)
+{
+    modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(850, 0, -200 + ik * 10)));
+}*/
 
             //bottom line
             for (int ik = 0; ik < 100; ik++)
@@ -158,7 +269,7 @@ namespace Assignment
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary, 0, ik * boundaryWidth - 1000)));
             }
-            
+
             //one of 15
             for (int ik = 0; ik < 20; ik++)
             {
@@ -211,8 +322,6 @@ namespace Assignment
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(rightBoundary, 0, ik * 40 - 1000)));
             }
-
-            base.LoadContent();
         }
 
         public Vector3 getPointRowColTest(Grid g)
@@ -268,9 +377,7 @@ namespace Assignment
                 }
             }
 
-
             return false;
-
         }
 
         public void stopPlayer()
@@ -280,105 +387,114 @@ namespace Assignment
         }
 
         private string curModel;
-        public override void Update(GameTime gameTime)
+
+        /// Add bullet
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="direction"></param>
+        public void AddShot(Vector3 position, Vector3 direction)
         {
-            foreach (BasicModel model in models)
-            {
-                if (!Collide())
-                {
-                    //Console.WriteLine("no collision~~~~");
-                }
-                else
-                {
-                    //Console.WriteLine("collision!!!");
-                    //stopPlayer();
-                }
-                model.update(gameTime);
-            }
-            /*
-            pickPosition = mousePick.GetCollisionPosition();
-            float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
-
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed
-                && pickPosition.HasValue == true)
-            {
-                tankModel.tankFindPath(maze);
-            }*/
-
-            Vector3 playerPosition = tankModel.getCurrentPosition();
-            Vector3 npc0Position = npcModel.getCurrentPosition();
-            Vector3 npc1Position = npcModel1.getCurrentPosition();
-            float tmpx0 = (playerPosition - npc0Position).X;
-            float tmpz0 = (playerPosition - npc0Position).Z;
-
-            float tmpx1 = (playerPosition - npc1Position).X;
-            float tmpz1 = (playerPosition - npc1Position).Z;
-
-            double distancediff = Math.Sqrt(tmpx0 * tmpx0 + tmpz0 * tmpz0);
-            //Console.WriteLine("00000" + distancediff);
-            if (distancediff < 500)
-            {
-                npcModel.setbClose(true);
-                npcModel.evade(gameTime.ElapsedGameTime.Milliseconds, tankModel.getCurSpeed(), tankModel.getCurrentPosition());
-                curModel = lState[1];
-                //bEvade = true;
-            }
-            else if (distancediff > 1000)
-            {
-                curModel = lState[0];
-                //npcModel.changePortableModel(curModel);
-                npcModel.setbClose(false);
-            }
-
-            distancediff = Math.Sqrt(tmpx1 * tmpx1 + tmpz1 * tmpz1);
-            //Console.WriteLine("11111" + distancediff);
-            if (bPursue || distancediff < 500)
-            {
-                npcModel1.setbClose(true);
-                npcModel1.pursue(gameTime.ElapsedGameTime.Milliseconds, tankModel.getCurSpeed(), tankModel.getCurrentPosition());
-                bPursue = true;
-            }
-
-
-            base.Update(gameTime);
+            //direction = Camera.getCameraDirection();
+            direction = tankModel.getTankDirection();
+            direction.Y = 0;
+            position.Y = 30;    //bullet heigth
+            shots.Add(new Bullet(
+                //Game.Content.Load<Model>(@"Models\Bullet\ammo"),
+                Game.Content.Load<Model>(@"Models\Bullet\bullet"),
+                position, direction * 50, 0, 0, 0));
         }
-
-
-
-        public override void Draw(GameTime gameTime)
+        public void UpdateShots(GameTime gameTime)
         {
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            foreach (BasicModel model in models)
+            // Loop through shots
+            for (int i = 0; i < shots.Count; ++i)
             {
-                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
-            }
+                // Update each shot
+                shots[i].update(gameTime);
 
-            foreach (BasicModel model in modelsObstacle)
-            {
-                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
+                Vector3 range = shots[i].getWorld().Translation - Tank.tankPosition;
+                if (range.X > maxX || range.X < minX
+                    || range.Y > maxY || range.Y < minY
+                    || range.Z > maxZ || range.Z < minZ)
+                {
+                    shots.RemoveAt(i);
+                    i -= 1;
+                }
+                //else
+                //{
+                //    for (int j = 0; j < npcModel.Count; ++j)
+                //    {
+                //        //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
+                //        if (shots[i].CollidesWith(
+                //            shots[i].model,
+                //            (shots[i].getWorld()),
+                //            npcModel[j].model,
+                //            (npcModel[j].GetTankPosition())))
+                //        {
+                //            // Collision! remove the tank and the shot.
+                //            npcModel.RemoveAt(j);
+                //            shots.RemoveAt(i);
+                //            i -= 1;
+                //            ////get score
+                //            //PlayInfo.AddScore(1);
+                //            break;
+                //        }
+                //    }
+                //}
             }
-            foreach (BasicModel model in modelsObstacleFirm)
-            {
-                model.Draw(((Game1)Game).device, ((Game1)Game).camera);
-            }
-
-            /*spriteBatch.Begin();
-            Vector2 fontOrigin = font.MeasureString(text) / 2;
-            spriteBatch.DrawString(
-                font,
-                text,
-                fontPosition,
-                Color.Red,
+        }
+        private void SetNextSpawnTime()
+        {
+            nextSpawnTime = ((Game1)Game).rnd.Next(
+                levelInfoList[currentLevel].minSpawnTime,
+                levelInfoList[currentLevel].maxSpawnTime);
+            timeSinceLastSpawn = 0;
+        }
+        private void SpawnEnemy()
+        {
+            // Generate random position with random X and random Y
+            // between -maxX and maxX and -maxY and maxY. Z is always
+            // the same for all ships.
+            Vector3 position = new Vector3(((Game1)Game).rnd.Next(
+                -(int)maxSpawnLocation.X, (int)maxSpawnLocation.X),
                 0,
-                fontOrigin,
-                0.0f,
-                SpriteEffects.None,
-                0f);
-            spriteBatch.End();*/
+                ((Game1)Game).rnd.Next(-(int)maxSpawnLocation.Z, (int)maxSpawnLocation.Z));
+
+            // Direction will always be (0, 0, Z), where
+            // Z is a random value between minSpeed and maxSpeed
+            Vector3 direction = new Vector3(0, 0,
+                ((Game1)Game).rnd.Next(
+                levelInfoList[currentLevel].minSpeed,
+                levelInfoList[currentLevel].maxSpeed));
+
+            // Get a random roll rotation between -maxRollAngle and maxRollAngle
+            float rollRotation = (float)((Game1)Game).rnd.NextDouble() *
+                    maxRollAngle - (maxRollAngle / 2);
+
+            // Add model to the list
+            int[,] a = instanceAstra.retMapInformation();
+            enemies.Add(new NpcTank(
+                Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol(), position, direction));
 
 
-            base.Draw(gameTime);
+
+            // Increment # of enemies this level and set next spawn time
+            ++enemiesThisLevel;
+            SetNextSpawnTime();
         }
+        protected void CheckToSpawnEnemy(GameTime gameTime)
+        {
+            // Time to spawn a new enemy?
+            if (enemiesThisLevel <
+                levelInfoList[currentLevel].numberEnemies)
+            {
+                timeSinceLastSpawn += gameTime.ElapsedGameTime.Milliseconds;
+                if (timeSinceLastSpawn > nextSpawnTime)
+                {
+                    SpawnEnemy();
+                }
+            }
+        }
+
     }
 }
