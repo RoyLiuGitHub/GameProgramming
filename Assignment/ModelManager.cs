@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework.Input;
-
+using Microsoft.Xna.Framework.Audio;
 
 namespace Assignment
 {
@@ -22,6 +22,8 @@ namespace Assignment
         List<BasicModel> enemyShots = new List<BasicModel>();
 
         List<BasicModel> enemies = new List<BasicModel>();
+
+        List<BasicModel> enemies2 = new List<BasicModel>();
 
         Tank tankModel;
         //NpcTank npcModel;
@@ -86,7 +88,7 @@ namespace Assignment
         Vector2 timeLeftPosition = new Vector2(800, 0);
         Vector2 levelPosition = new Vector2(10, 0);
         Vector2 gameOverPosition = new Vector2(400, 300);
-        Vector2 lifePosition = new Vector2(100, 100);
+        Vector2 lifePosition = new Vector2(800, 0);
 
         // For time counter and score
         string score;
@@ -101,6 +103,18 @@ namespace Assignment
         public Vector3 bulletPosition = Vector3.Zero;
         public Vector3 bulletDirection = Vector3.Zero;
         Vector3 temp = Vector3.Zero;
+
+        // Sound Effect
+        public SoundEffect soundFX1;
+        public SoundEffectInstance BGM;
+        public SoundEffect soundFX2;
+        public SoundEffectInstance shotSound;
+        public SoundEffect soundFX3;
+        public SoundEffectInstance shotSound2;
+        public static SoundEffect soundFX4;
+        public static SoundEffectInstance tankTrackSound;
+
+        bool destoryed;
 
 
         //DijkstraManager dij;
@@ -200,10 +214,35 @@ namespace Assignment
 
 
 
-    //        shots.Add(new Bullet(
-    ////Game.Content.Load<Model>(@"Models\Bullet\ammo"),
-    //Game.Content.Load<Model>(@"Models\Bullet\bullet"),
-    //new Vector3(0,0,0), Vector3.Zero, 0, 0, 0));
+            //        shots.Add(new Bullet(
+            ////Game.Content.Load<Model>(@"Models\Bullet\ammo"),
+            //Game.Content.Load<Model>(@"Models\Bullet\bullet"),
+            //new Vector3(0,0,0), Vector3.Zero, 0, 0, 0));
+
+            // Add model to the list
+            enemies2.Add(new PatrolEnemy(
+                Game.Content.Load<Model>(@"Models\Enemy\tank"),
+                new Vector3(-1200,0,0)));
+
+
+
+            soundFX1 = Game.Content.Load<SoundEffect>(@"Sounds/Explosion");
+            BGM = soundFX1.CreateInstance();
+            BGM.IsLooped = true;
+            BGM.Play();
+            soundFX2 = Game.Content.Load<SoundEffect>(@"Sounds/shot");
+            shotSound = soundFX2.CreateInstance();
+            shotSound.IsLooped = false;
+            //shotSound.Play();
+            soundFX3 = Game.Content.Load<SoundEffect>(@"Sounds/shot2");
+            shotSound2 = soundFX3.CreateInstance();
+            shotSound2.IsLooped = false;
+            //shotSound2.Play();
+            soundFX4 = Game.Content.Load<SoundEffect>(@"Sounds/tank_tracks");
+            tankTrackSound = soundFX4.CreateInstance();
+            tankTrackSound.IsLooped = false;
+            //tankTrackSound.Play();
+
 
 
 
@@ -240,6 +279,11 @@ namespace Assignment
             for (int i = 0; i < enemies.Count; ++i)
             {
                 enemies[i].update(gameTime);
+            }
+
+            for (int i = 0; i < enemies2.Count; ++i)
+            {
+                enemies2[i].update(gameTime);
             }
             // Check to see if it's time to spawn
             CheckToSpawnEnemy(gameTime);
@@ -286,15 +330,24 @@ namespace Assignment
             {
                 e.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
             }
+            foreach (BasicModel e2 in enemies2)
+            {
+                e2.Draw(((Game1)Game).GraphicsDevice, ((Game1)Game).camera);
+            }
 
             ///Draw score and time
 
             spriteBatch.Begin();
             //spriteBatch.DrawString(font, "Hello world", new Vector2(120, 120), Color.Orchid);
 
-            spriteBatch.DrawString(font, "Level: " + currentLevel + 1, levelPosition, Color.YellowGreen);
-            spriteBatch.DrawString(font, "Score: " + score + "/" + levelInfoList[currentLevel].numberEnemies, scorePosition, Color.YellowGreen);
-            spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
+            int temp1 = currentLevel;
+            temp1++;
+            int temp2 = levelInfoList[currentLevel].numberEnemies;
+            temp2++;
+
+            spriteBatch.DrawString(font, "Level: " + temp1, levelPosition, Color.YellowGreen);
+            spriteBatch.DrawString(font, "Score: " + score + "/" + temp2, scorePosition, Color.YellowGreen);
+            //spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Life: " + life, lifePosition, Color.YellowGreen);
 
 
@@ -488,6 +541,7 @@ for (int ik = 0; ik < 50; ik++)
         }
         public void UpdateShots(GameTime gameTime)
         {
+            destoryed = false;
             // Loop through shots
             for (int i = 0; i < shots.Count; ++i)
             {
@@ -501,6 +555,7 @@ for (int ik = 0; ik < 50; ik++)
                 {
                     shots.RemoveAt(i);
                     i -= 1;
+                    destoryed = true;
                 }
                 else
                 {
@@ -517,28 +572,35 @@ for (int ik = 0; ik < 50; ik++)
                             enemies.RemoveAt(j);
                             shots.RemoveAt(i);
                             i -= 1;
+                            destoryed = true;
                             //get score
                             PlayInfo.AddScore(1);
                             break;
                         }
                     }
 
-                    //if (destoryed == false)
-                    //{
-                    //    if (shots[i].CollidesWith(
-                    //        shots[i].model,
-                    //        (shots[i].getWorld()),
-                    //        tankModel.model,
-                    //        (tankModel.getWorld())))
-                    //    {
-                    //        // Collision! remove  the shot and reduce the life
-                    //        shots.RemoveAt(i);
-                    //        i -= 1;
-                    //        //get score
-                    //        PlayInfo.reduceLife(1);
-                    //        break;
-                    //    }
-                    //}
+                    if (destoryed == false)
+                    {
+                        for (int j = 0; j < enemies2.Count; ++j)
+                        {
+                            //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
+                            if (shots[i].CollidesWith(
+                                shots[i].model,
+                                (shots[i].getWorld()),
+                                enemies2[j].model,
+                                (enemies2[j].getWorld())))
+                            {
+                                // Collision! remove the tank and the shot.
+                                enemies2.RemoveAt(j);
+                                shots.RemoveAt(i);
+                                i -= 1;
+                                destoryed = true;
+                                //get score
+                                PlayInfo.AddScore(1);
+                                break;
+                            }
+                        }
+                    }
 
                 }
             }
@@ -574,7 +636,7 @@ for (int ik = 0; ik < 50; ik++)
             // Add model to the list
             int[,] a = instanceAstra.retMapInformation();
             enemies.Add(new NpcTank(
-                Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol(), position, direction));
+                Game.Content.Load<Model>(@"Models/Enemy/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol(), position, direction));
 
 
 
@@ -630,6 +692,13 @@ for (int ik = 0; ik < 50; ik++)
                 //Vector3 tempDirection = Tank.
                 enemyFireShots(gameTime, tempPosition, tempDirection);
             }
+            //foreach (BasicModel model2 in enemies2)
+            //{
+            //    Vector3 tempPosition = model2.GetModelPosition();
+            //    Vector3 tempDirection = model2.GetTankDirection();
+            //    //Vector3 tempDirection = Tank.
+            //    enemyFireShots(gameTime, tempPosition, tempDirection);
+            //}
         }
 
 
@@ -659,10 +728,10 @@ for (int ik = 0; ik < 50; ik++)
                        bulletPosition,
                         this.bulletDirection * shotSpeed);
 
-                    //modelManager.playShotSound();
+                playEnemyShotSound();
 
                     // Reset the shot countdown
-                    shotCountdown = shotDelay;
+                shotCountdown = shotDelay;
                 //}
             }
             else
@@ -713,6 +782,13 @@ for (int ik = 0; ik < 50; ik++)
                 }
             }
         }
-
+        public void playShotSound()
+        {
+            shotSound.Play();
+        }
+        public void playEnemyShotSound()
+        {
+            shotSound2.Play();
+        }
     }
 }

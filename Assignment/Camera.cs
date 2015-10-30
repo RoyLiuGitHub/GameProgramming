@@ -21,6 +21,11 @@ namespace Assignment
 
         Vector3 preCameraPosition;
 
+        float fieldOfView = MathHelper.PiOver4;
+        float zoomRate = 0.85f;
+        float nearPlaneDistance = 1;
+        float farPlaneDistance = 8000;
+
         public Camera(Game game, Vector3 pos, Vector3 target, Vector3 up)
             : base(game)
         {
@@ -66,9 +71,28 @@ namespace Assignment
             //    (Mouse.GetState().X - prevMouseState.X)));
 
 
-            ////Reset prevMouseState
-            //prevMouseState = Mouse.GetState();
 
+
+            //Zoom
+            if (prevMouseState.ScrollWheelValue < Mouse.GetState().ScrollWheelValue)
+            {
+                projection = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView * zoomRate,
+                (float)Game.Window.ClientBounds.Width /
+                (float)Game.Window.ClientBounds.Height,
+                nearPlaneDistance, farPlaneDistance);
+            }
+            else if (prevMouseState.ScrollWheelValue > Mouse.GetState().ScrollWheelValue)
+            {
+                projection = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView,
+                (float)Game.Window.ClientBounds.Width /
+                (float)Game.Window.ClientBounds.Height,
+                nearPlaneDistance, farPlaneDistance);
+            }
+
+            //Reset prevMouseState
+            prevMouseState = Mouse.GetState();
 
             CreateLookAt();
 

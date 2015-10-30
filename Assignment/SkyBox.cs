@@ -34,7 +34,7 @@ namespace Assignment
 
             //return Matrix.CreateScale(3000f);
 
-            return Matrix.CreateScale(3000f) * translation;
+            return Matrix.CreateScale(3600f) * translation;
         }
 
 

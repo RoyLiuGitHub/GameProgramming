@@ -59,7 +59,7 @@ namespace Assignment
             //camera = new Camera(this, new Vector3(0, 2500, 500), new Vector3(500, 200, 500), Vector3.Up);
 
             //camera = new Camera(this, new Vector3(0, 1500, 4000),new Vector3(0, 0, 3000), Vector3.Up);
-            camera = new Camera(this, new Vector3(0, 2000, -3000), new Vector3(0, 0, 1000), Vector3.Up);
+            camera = new Camera(this, new Vector3(-200, 3200, -3000), new Vector3(-200, 0, 500), Vector3.Up);
 
             Components.Add(camera);
 
@@ -149,7 +149,7 @@ namespace Assignment
                        bulletPosition,
                         bulletDirection * shotSpeed);
 
-                    //modelManager.playShotSound();
+                    modelManager.playShotSound();
 
                     // Reset the shot countdown
                     shotCountdown = shotDelay;

@@ -84,6 +84,7 @@
     <Compile Include="ModelManager.cs" />
     <Compile Include="MousePick.cs" />
     <Compile Include="NpcTank.cs" />
+    <Compile Include="PatrolEnemy.cs" />
     <Compile Include="PlayInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -246,6 +247,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Arial.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Sounds\shot2.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -123,6 +123,7 @@ namespace Assignment
 
         //2015/10/30
         Vector3 preTankPosition;
+        Vector3 preDirection;
         Vector3 displacement;
         //tank moving speed    fixed speed for WASD movement
         int WASDspeed = 10;
@@ -229,6 +230,7 @@ namespace Assignment
         {
             isAuto = true;
             preTankPosition = tankPosition;
+            preDirection = direction;
 
 
             //base.update(gameTime);
@@ -251,6 +253,14 @@ namespace Assignment
             //For bullet direction
             turretDirection = Vector3.Transform(tankPosition, turretBone.Transform);
 
+            if (preTankPosition != tankPosition || preDirection != direction)
+            {
+                ModelManager.tankTrackSound.Resume();
+            }
+            else
+            {
+                ModelManager.tankTrackSound.Stop();
+            }
 
             base.update(gameTime);
 
