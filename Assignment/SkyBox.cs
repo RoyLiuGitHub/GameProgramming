@@ -5,10 +5,11 @@ namespace Assignment
 {
     class SkyBox : BasicModel
     {
+        Matrix translation = Matrix.Identity;
         public SkyBox(Model model)
             : base(model)
         {
-
+            translation.Translation = new Vector3(0, 300, 0);
         }
 
         /*public override void update()
@@ -29,7 +30,11 @@ namespace Assignment
             //movement.Y = 0;
 
             //return Matrix.CreateScale(2000f) * Matrix.CreateTranslation(movement);
-            return Matrix.CreateScale(3000f);
+
+
+            //return Matrix.CreateScale(3000f);
+
+            return Matrix.CreateScale(3000f) * translation;
         }
 
 

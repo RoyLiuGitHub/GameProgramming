@@ -50,6 +50,15 @@ namespace Assignment
 
         int reNavigateTime = 0;
 
+        SteerMode steerMode;
+
+        enum SteerMode
+        {
+            IDLE,
+            PURSUE,
+            EVADE
+        }
+
         public float WheelRotation
         {
             get { return wheelRotationValue; }
@@ -186,6 +195,9 @@ namespace Assignment
 
 
             float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
+
+            
+
             navigate(gameTime);
             LimitInBoundary();
             translation.Translation = tankPosition;

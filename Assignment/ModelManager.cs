@@ -298,7 +298,7 @@ namespace Assignment
             }
             if (isDied())
             {
-                spriteBatch.DrawString(font, "You are died!", gameOverPosition, Color.Red);
+                spriteBatch.DrawString(font, "You are dead!", gameOverPosition, Color.Red);
             }
 
 
@@ -620,10 +620,10 @@ for (int ik = 0; ik < 50; ik++)
 
             if (shotCountdown <= 0)
             {
-                // Did player press space bar or left mouse button?
-                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                //// Did player press space bar or left mouse button?
+                //if (Mouse.GetState().LeftButton == ButtonState.Pressed)
 
-                {
+                //{
                     //bulletPosition = Tank.tankPosition;
                     //this.bulletPosition = bulletPosition;
                     //this.bulletDirection = bulletDirection;
@@ -645,7 +645,7 @@ for (int ik = 0; ik < 50; ik++)
 
                     // Reset the shot countdown
                     shotCountdown = shotDelay;
-                }
+                //}
             }
             else
                 shotCountdown -= gameTime.ElapsedGameTime.Milliseconds;
