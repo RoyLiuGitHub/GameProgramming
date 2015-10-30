@@ -627,16 +627,19 @@ for (int ik = 0; ik < 50; ik++)
                     //bulletPosition = Tank.tankPosition;
                     //this.bulletPosition = bulletPosition;
                     //this.bulletDirection = bulletDirection;
+
                     this.bulletDirection = tankModel.getPosition()- bulletPosition;
-                    bulletDirection.Y = 20;
+                    this.bulletDirection.Y = 20;
+                    //bulletDirection.X *= -1;
+                    //bulletDirection.Z *= -1;
                     //this.bulletDirection = new Vector3(1,0,1);
-                    //bulletDirection.Normalize();
+                    this.bulletDirection.Normalize();
 
 
                     // Add a shot to the model manager
                     AddEnemyShot(
                        bulletPosition,
-                        bulletDirection * shotSpeed);
+                        this.bulletDirection * shotSpeed);
 
                     //modelManager.playShotSound();
 
@@ -689,8 +692,6 @@ for (int ik = 0; ik < 50; ik++)
                         PlayInfo.reduceLife(1);
                         break;
                     }
-
-
                 }
             }
         }
