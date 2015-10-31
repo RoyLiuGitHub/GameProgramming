@@ -222,7 +222,7 @@ namespace Assignment
             penemy = new PatrolEnemy(
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
                 new Vector3(-1200, 0, 0));
-            models.Add(penemy);
+            //models.Add(penemy);
             enemies2.Add(penemy);
 
 
@@ -670,6 +670,8 @@ for (int ik = 0; ik < 50; ik++)
                 ((Game1)Game).rnd.Next(
                 levelInfoList[currentLevel].minSpeed,
                 levelInfoList[currentLevel].maxSpeed));
+
+            position = new Vector3(-1200, 0, 1200);
 
             // Get a random roll rotation between -maxRollAngle and maxRollAngle
             float rollRotation = (float)((Game1)Game).rnd.NextDouble() *
