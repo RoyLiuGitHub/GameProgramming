@@ -136,7 +136,7 @@ namespace Assignment
             instanceAstra = new Astra();
 
             // Initialize game levels
-            levelInfoList.Add(new LevelInfo(1000, 3000, 10, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(1000, 3000, 1, 2, 6, 10));
             levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
             levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
             levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
@@ -186,10 +186,10 @@ namespace Assignment
 
             skyboxTextures = new Texture2D[skyModel.Meshes.Count];
 
-            int i = 0;
+            /*int i = 0;
             foreach (ModelMesh mesh in skyModel.Meshes)
                 foreach (BasicEffect currentEffect in mesh.Effects)
-                    skyboxTextures[i++] = currentEffect.Texture;
+                    skyboxTextures[i++] = currentEffect.Texture;*/
 
             /*foreach (ModelMesh mesh in skyModel.Meshes)
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
