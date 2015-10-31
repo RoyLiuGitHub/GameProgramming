@@ -219,11 +219,11 @@ namespace Assignment
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
                 new Vector3(-1200, 0, 0));*/
 
-            penemy = new PatrolEnemy(
+            /*penemy = new PatrolEnemy(
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
                 new Vector3(-1200, 0, 0));
             //models.Add(penemy);
-            enemies2.Add(penemy);
+            enemies2.Add(penemy);*/
 
 
 
@@ -360,7 +360,7 @@ namespace Assignment
 
 
 
-            if (LevelUp() && getPatrolNumber() == 0)
+            if (LevelUp())
             {
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
             }
