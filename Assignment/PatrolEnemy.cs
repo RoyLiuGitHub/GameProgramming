@@ -64,7 +64,7 @@ namespace Assignment
                 angle = (float)Math.Atan2(-1, 1);
                 rotation = Matrix.CreateRotationY(angle);
             }
-
+            
 
             base.update(gameTime);
         }

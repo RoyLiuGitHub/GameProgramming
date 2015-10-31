@@ -18,6 +18,10 @@ namespace Assignment
         {
             this.model = model;
         }
+        public virtual void setBoolCollision()
+        {
+
+        }
         public virtual Vector3 getCurSpeed()
         {
             return Vector3.Zero;

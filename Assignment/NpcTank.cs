@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-
 namespace Assignment
 {
     class NpcTank : BasicModel
@@ -47,6 +46,9 @@ namespace Assignment
         float turretRotationValue;
         float cannonRotationValue;
         float hatchRotationValue;
+        private const int MIN_DISTANCE = 500;
+        private const int DISCOVERY_DISTANCE = 800;
+        private bool bCollision;
 
         int reNavigateTime = 0;
         bool isPURSUE;
@@ -152,6 +154,7 @@ namespace Assignment
             col = c;
 
             isNavigate = false;
+            bCollision = false;
 
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
             rightBackWheelBone = model.Bones["r_back_wheel_geo"];
@@ -339,7 +342,7 @@ namespace Assignment
         {
             float distance = Vector3.Distance(Tank.tankPosition, tankPosition);
             //PURSUE
-            if (distance)
+            if (distance < DISCOVERY_DISTANCE)
             {
                 isPURSUE = true;
                 navigate(gameTime, isPURSUE);
@@ -347,7 +350,7 @@ namespace Assignment
                 translation.Translation = tankPosition;
             }
             //EVADE
-            else if (distance)
+            else if (distance > MIN_DISTANCE)
             {
                 isPURSUE = false;
                 navigate(gameTime, isPURSUE);
@@ -357,6 +360,11 @@ namespace Assignment
             //IDLE  do nothind
             else
             { }
+        }
+
+        public override void setBoolCollision()
+        {
+            bCollision = true;
         }
 
         public void navigate(GameTime gameTime, bool PURSUE)
@@ -392,24 +400,40 @@ namespace Assignment
                 //Grid destinationPositionRowCol = getPointRowColTest();
 
                 initMap();
-                Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
+                Point p;
+                if ((destinationPositionRowCol.col == currentPositionRowCol.col && destinationPositionRowCol.row == currentPositionRowCol.row) || bCollision)
+                {
+                    p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
+                    bCollision = false;
+                    isNavigate = false;
+                    if (p != null)
+                    {
+                        Vector3 nextcood = getPointCood(p);
+                        destination = nextcood;
+                        //destination = pickPosition.Value;
+
+                        destination.Y = 0;
+                        distance = destination - getCurrentPosition();
+
+                        direction = distance;
+                        direction.Normalize();
+                    }
+                    else
+                    {
+                        isNavigate = false;
+                    }
+                }
+                else
+                {
+                    isNavigate = false; 
+                }
+                
 
                 reNavigateTime = 3000;
 
 
 
-                if (p != null)
-                {
-                    Vector3 nextcood = getPointCood(p);
-                    destination = nextcood;
-                    //destination = pickPosition.Value;
-
-                    destination.Y = 0;
-                    distance = destination - getCurrentPosition();
-
-                    direction = distance;
-                    direction.Normalize();
-                }
+                
 
             }
 
@@ -491,6 +515,19 @@ namespace Assignment
                     //rotation = Matrix.CreateRotationY(angle);
                 }
 
+            }
+            else
+            {
+                //streeing
+                float distance = Vector3.Distance(Tank.tankPosition, tankPosition);
+                if (distance > MIN_DISTANCE)
+                {
+                    Vector3 pursueDirect =  Tank.tankPosition - tankPosition;
+                    pursueDirect.Normalize();
+                    v.increaseVelocity(gameTime);
+                    speed = pursueDirect * v.Speed;
+                    tankPosition += speed;
+                }
             }
         }
 

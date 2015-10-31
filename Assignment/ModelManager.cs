@@ -26,6 +26,7 @@ namespace Assignment
         List<BasicModel> enemies2 = new List<BasicModel>();
 
         Tank tankModel;
+        PatrolEnemy penemy;
         //NpcTank npcModel;
         //NpcTank npcModel1;
 
@@ -134,7 +135,7 @@ namespace Assignment
             instanceAstra = new Astra();
 
             // Initialize game levels
-            levelInfoList.Add(new LevelInfo(1000, 3000, 1, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(1000, 3000, 3, 2, 6, 10));
             levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
             levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
             levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
@@ -220,9 +221,15 @@ namespace Assignment
             //new Vector3(0,0,0), Vector3.Zero, 0, 0, 0));
 
             // Add model to the list
-            enemies2.Add(new PatrolEnemy(
+            /*penemy = new PatrolEnemy(
                 Game.Content.Load<Model>(@"Models\Enemy\tank"),
-                new Vector3(-1200,0,0)));
+                new Vector3(-1200, 0, 0));*/
+
+            penemy = new PatrolEnemy(
+                Game.Content.Load<Model>(@"Models\Enemy\tank"),
+                new Vector3(-1200, 0, 0));
+            models.Add(penemy);
+            enemies2.Add(penemy);
 
 
 
@@ -249,10 +256,15 @@ namespace Assignment
             base.LoadContent();
         }
 
+        public int getPatrolNumber()
+        {
+            return enemies2.Count;
+        }
+
         public override void Update(GameTime gameTime)
         {
             
-                foreach (BasicModel model in models)
+            foreach (BasicModel model in models)
                 {
                 if (tankModel.getIsAuto() == false)
                 {
@@ -352,7 +364,7 @@ namespace Assignment
 
 
 
-            if (LevelUp())
+            if (LevelUp() && getPatrolNumber() == 0)
             {
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
             }
@@ -501,6 +513,21 @@ for (int ik = 0; ik < 50; ik++)
                     return true;
                 }
             }
+            for (int j = enemies.Count - 1; j >= 0; j--)
+            {
+                for (int i = modelsObstacleFirm.Count - 1; i >= 0; i--)
+                {
+                    if (modelsObstacleFirm[i].CollidesWith(
+                                    modelsObstacleFirm[i].model,
+                                    (modelsObstacleFirm[i].getWorld()),
+                                    enemies[j].model,
+                                    (enemies[j].getWorld())))
+                    {
+                        return true;
+                    }
+                }
+            }
+
             for (int i = enemies.Count - 1; i >= 0; i--)
             {
                 if (enemies[i].CollidesWith(
@@ -513,6 +540,20 @@ for (int ik = 0; ik < 50; ik++)
                 }
             }
 
+            for (int i = enemies2.Count - 1; i >= 0; i--)
+            {
+                if (enemies2[i].CollidesWith(
+                                enemies2[i].model,
+                                (enemies2[i].getWorld()),
+                                tankModel.model,
+                                (tankModel.getWorld())))
+                {
+                    return true;
+                }
+            }
+
+            
+            
             return false;
         }
 
@@ -618,7 +659,7 @@ for (int ik = 0; ik < 50; ik++)
             // between -maxX and maxX and -maxY and maxY. Z is always
             // the same for all ships.
             Vector3 position = new Vector3(((Game1)Game).rnd.Next(
-                -(int)maxSpawnLocation.X, (int)maxSpawnLocation.X),
+                -(int)maxSpawnLocation.X, ((int)maxSpawnLocation.X+800)%1800),
                 0,
                 ((Game1)Game).rnd.Next(-(int)maxSpawnLocation.Z, (int)maxSpawnLocation.Z));
 
