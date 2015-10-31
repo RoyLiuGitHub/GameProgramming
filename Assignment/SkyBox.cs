@@ -9,7 +9,7 @@ namespace Assignment
         public SkyBox(Model model)
             : base(model)
         {
-            translation.Translation = new Vector3(0, 300, 0);
+            translation.Translation = new Vector3(0, 3000, 0);
         }
 
         /*public override void update()
@@ -34,7 +34,7 @@ namespace Assignment
 
             //return Matrix.CreateScale(3000f);
 
-            return Matrix.CreateScale(3600f) * translation;
+            return Matrix.CreateScale(2000f) * translation;
         }
 
 
