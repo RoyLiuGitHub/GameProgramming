@@ -24,7 +24,6 @@ namespace Assignment
             direction = Direction;
             position = Position;
             translation = Matrix.CreateTranslation(position);
-
         }
 
         public override void update(GameTime gameTime)
@@ -32,14 +31,12 @@ namespace Assignment
             // Rotate model
             rotation *= Matrix.CreateFromYawPitchRoll(yawAngle,
                 pitchAngle, rollAngle);
-
             // Move model
             Vector3 temp = direction;
             temp.Normalize();
             temp *= 10;
 
             world *= Matrix.CreateTranslation(temp);
-
             //calcaulate bullet position
             position += direction;
 

@@ -13,9 +13,6 @@ namespace Assignment
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         ModelManager modelManager;
-        //DijkstraManager dijkstradanager;
-
-
         Vector3 cameraPosition = new Vector3(0, 25, 15);
         //public 
         public GraphicsDevice device { get; protected set; }
@@ -134,16 +131,6 @@ namespace Assignment
                 {
                     bulletPosition = Tank.tankPosition;
                     bulletDirection = Tank.turretDirection;
-
-
-                    ////Make sure bullet leave the tank before check collision
-                    //temp = bulletDirection;
-                    //temp.Normalize();
-                    //temp *= 500;
-                
-                    //bulletPosition += temp;
-
-
                     // Add a shot to the model manager
                     modelManager.AddShot(
                        bulletPosition,

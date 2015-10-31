@@ -17,8 +17,6 @@ namespace Assignment
         List<BasicModel> modelsObstacle = new List<BasicModel>();
         List<BasicModel> modelsObstacleFirm = new List<BasicModel>();
         List<BasicModel> hampers = new List<BasicModel>();
-
-        //bullet  change to public for shots count
         List<BasicModel> shots = new List<BasicModel>();
         List<BasicModel> enemyShots = new List<BasicModel>();
 
@@ -28,8 +26,6 @@ namespace Assignment
 
         Tank tankModel;
         PatrolEnemy penemy;
-        //NpcTank npcModel;
-        //NpcTank npcModel1;
 
         int[,] graph_max_other;
         int[,] graph_max_player;
@@ -42,13 +38,7 @@ namespace Assignment
         Vector3 player_dis;
         Vector3 player_dis_next = Vector3.Zero;
         Vector3 npc_dis;
-
-        //SpriteFont font;
-        //Vector2 fontPosition;
         string text;
-        //SpriteBatch spriteBatch;
-        //GraphicsDeviceManager graphics;
-        //MousePick mousePick;
 
         private bool bPursue;
         private bool bEvade;
@@ -90,13 +80,10 @@ namespace Assignment
         Vector2 levelPosition = new Vector2(10, 0);
         Vector2 gameOverPosition = new Vector2(400, 300);
         Vector2 lifePosition = new Vector2(800, 0);
-
         // For time counter and score
         string score;
         string timeUsed;
         string life;
-
-
         //bullet profile
         private const float shotSpeed = 0.01f;
         private const int shotDelay = 2700;
@@ -116,23 +103,13 @@ namespace Assignment
         public static SoundEffectInstance tankTrackSound;
 
         bool destoryed;
-
-
-        //DijkstraManager dij;
-        //Astra astra;
         Astra instanceAstra;
-        
-
         public ModelManager(Game game)
             : base(game)
         {
 
             bPursue = false;
             bEvade = false;
-
-            
-
-            //dij = new DijkstraManager();
             instanceAstra = new Astra();
 
             // Initialize game levels
@@ -156,17 +133,8 @@ namespace Assignment
 
         public override void Initialize()
         {
-            //Set initial spawn time
             SetNextSpawnTime();
-
-            //spriteBatch = new SpriteBatch(((Game1)Game).GraphicsDevice);
-            //font = Game.Content.Load<SpriteFont>(@"Arial");
-            //fontPosition = new Vector2(((Game1)Game).GraphicsDevice.Viewport.Width / 2, ((Game1)Game).GraphicsDevice.Viewport.Height / 2);
-
             text = "FSM: \n";
-
-            
-
             instanceAstra.readMapInformation();
             PlayInfo.initLife(3);
 
@@ -175,9 +143,6 @@ namespace Assignment
 
         protected override void LoadContent()
         {
-            //models.Add(new BasicModel(Game.Content.Load<Model>(@"Ground/Ground")));
-
-
             models.Add(new Ground(
                Game.Content.Load<Model>(@"Models/Ground/Ground")));
 
@@ -185,15 +150,6 @@ namespace Assignment
             models.Add(new SkyBox(skyModel));
 
             skyboxTextures = new Texture2D[skyModel.Meshes.Count];
-
-            /*int i = 0;
-            foreach (ModelMesh mesh in skyModel.Meshes)
-                foreach (BasicEffect currentEffect in mesh.Effects)
-                    skyboxTextures[i++] = currentEffect.Texture;*/
-
-            /*foreach (ModelMesh mesh in skyModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect.Clone();*/
             int [,] a = instanceAstra.retMapInformation();
             tankModel = new Tank(Game.Content.Load<Model>(@"Models/Tank/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol());
             
@@ -206,27 +162,6 @@ namespace Assignment
             //Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Game.Content.Load<SpriteFont>(@"Fonts\Arial");
-
-
-
-            //        shots.Add(new Bullet(
-            ////Game.Content.Load<Model>(@"Models\Bullet\ammo"),
-            //Game.Content.Load<Model>(@"Models\Bullet\bullet"),
-            //new Vector3(0,0,0), Vector3.Zero, 0, 0, 0));
-
-            // Add model to the list
-            /*penemy = new PatrolEnemy(
-                Game.Content.Load<Model>(@"Models\Enemy\tank"),
-                new Vector3(-1200, 0, 0));*/
-
-            /*penemy = new PatrolEnemy(
-                Game.Content.Load<Model>(@"Models\Enemy\tank"),
-                new Vector3(-1200, 0, 0));
-            //models.Add(penemy);
-            enemies2.Add(penemy);*/
-
-
-
             soundFX1 = Game.Content.Load<SoundEffect>(@"Sounds/Explosion");
             BGM = soundFX1.CreateInstance();
             BGM.IsLooped = true;
@@ -234,19 +169,12 @@ namespace Assignment
             soundFX2 = Game.Content.Load<SoundEffect>(@"Sounds/shot");
             shotSound = soundFX2.CreateInstance();
             shotSound.IsLooped = false;
-            //shotSound.Play();
             soundFX3 = Game.Content.Load<SoundEffect>(@"Sounds/shot2");
             shotSound2 = soundFX3.CreateInstance();
             shotSound2.IsLooped = false;
-            //shotSound2.Play();
             soundFX4 = Game.Content.Load<SoundEffect>(@"Sounds/tank_tracks");
             tankTrackSound = soundFX4.CreateInstance();
             tankTrackSound.IsLooped = false;
-            //tankTrackSound.Play();
-
-
-
-
             base.LoadContent();
         }
 
@@ -264,20 +192,15 @@ namespace Assignment
                 {
                     if (!Collide())
                     {
-                        //Console.WriteLine("no collision~~~~");
                     }
                     else
                     {
-                        //Console.WriteLine("collision!!!");
-                        //stopPlayer();
                         model.stop();
                     }
                 }
 
                 CollideEnemy();
                 model.update(gameTime);
-               
-
             }
 
             UpdateShots(gameTime);
@@ -301,9 +224,6 @@ namespace Assignment
             score = PlayInfo.GetScore().ToString();
             life = PlayInfo.GetLife().ToString();
             timeUsed = PlayInfo.getTime().ToString("0.0");
-
-
-
             base.Update(gameTime);
         }
 
@@ -346,7 +266,6 @@ namespace Assignment
             ///Draw score and time
 
             spriteBatch.Begin();
-            //spriteBatch.DrawString(font, "Hello world", new Vector2(120, 120), Color.Orchid);
 
             int temp1 = currentLevel;
             temp1++;
@@ -354,12 +273,8 @@ namespace Assignment
             temp2++;
 
             spriteBatch.DrawString(font, "Level: " + temp1, levelPosition, Color.YellowGreen);
-            spriteBatch.DrawString(font, "Score: " + score + "/" + temp2, scorePosition, Color.YellowGreen);
-            //spriteBatch.DrawString(font, "Time: " + timeUsed, timeLeftPosition, Color.YellowGreen);
+            spriteBatch.DrawString(font, "Score: " + score + "/" + temp1, scorePosition, Color.YellowGreen);
             spriteBatch.DrawString(font, "Life: " + life, lifePosition, Color.YellowGreen);
-
-
-
             if (LevelUp())
             {
                 spriteBatch.DrawString(font, "Well Done!", gameOverPosition, Color.Red);
@@ -368,7 +283,6 @@ namespace Assignment
             {
                 spriteBatch.DrawString(font, "You are dead!", gameOverPosition, Color.Red);
             }
-
 
             spriteBatch.End();
 
@@ -381,15 +295,6 @@ namespace Assignment
 
         public void addBoundary()
         {
-            /*for (int ik = 0; ik < 70; ik++)
-{
-    modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(300 + ik * 10, 0, 220)));
-}
-
-for (int ik = 0; ik < 50; ik++)
-{
-    modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(850, 0, -200 + ik * 10)));
-}*/
 
             //bottom line
             for (int ik = 0; ik < 100; ik++)
@@ -439,11 +344,6 @@ for (int ik = 0; ik < 50; ik++)
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth - ik * boundaryWidth, 0, 2200 - 40 * 40)));
             }
-            //stones
-            /*for (int ik = 0; ik < 2; ik++)
-            {
-                modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 38 * boundaryWidth, 0, 2200 - 60 * boundaryWidth - ik * boundaryWidth)));
-            }*/
             //top
             for (int ik = 0; ik < 100; ik++)
             {
@@ -476,7 +376,6 @@ for (int ik = 0; ik < 50; ik++)
                 if (rc.row == r)
                 {
                     retv.Z = 2200 - 40 * r - 20;
-                    //retv.X = 1600 - 200 * r - 100;
                     break;
                 }
             }
@@ -486,11 +385,8 @@ for (int ik = 0; ik < 50; ik++)
                 if (rc.col == c)
                 {
                     retv.X = leftBoundary - 40 * c - 20;
-                    //retv.Z = -1000 + 200 * c + 100;
                 }
             }
-            //Console.WriteLine("row--------------" + row);
-            //Console.WriteLine("col--------------" + col);
 
             return retv;
         }
@@ -560,7 +456,6 @@ for (int ik = 0; ik < 50; ik++)
 
         public void stopPlayer()
         {
-            //tankModel.WheelRotationValue = 0f;
             tankModel.setModelSpeed(0f);
         }
 
@@ -572,12 +467,10 @@ for (int ik = 0; ik < 50; ik++)
         /// <param name="direction"></param>
         public void AddShot(Vector3 position, Vector3 direction)
         {
-            //direction = Camera.getCameraDirection();
             direction = tankModel.getTankDirection();
             direction.Y = 0;
             position.Y = 30;    //bullet heigth
             shots.Add(new Bullet(
-                //Game.Content.Load<Model>(@"Models\Bullet\ammo"),
                 Game.Content.Load<Model>(@"Models\Bullet\bullet"),
                 position, direction * 50, 0, 0, 0));
         }
@@ -603,7 +496,6 @@ for (int ik = 0; ik < 50; ik++)
                 {
                     for (int j = 0; j < enemies.Count; ++j)
                     {
-                        //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
                         if (shots[i].CollidesWith(
                             shots[i].model,
                             (shots[i].getWorld()),
@@ -625,7 +517,6 @@ for (int ik = 0; ik < 50; ik++)
                     {
                         for (int j = 0; j < enemies2.Count; ++j)
                         {
-                            //if (playerArr[i].CollidesWith(modelsObstacleTree[j].model, modelsObstacleTree[j].GetworldWithoutDistance() * Matrix.CreateTranslation(modelsObstacleTree[j].GetModelPosition())))
                             if (shots[i].CollidesWith(
                                 shots[i].model,
                                 (shots[i].getWorld()),
@@ -682,8 +573,6 @@ for (int ik = 0; ik < 50; ik++)
             enemies.Add(new NpcTank(
                 Game.Content.Load<Model>(@"Models/Enemy/tank"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, a, instanceAstra.retRow(), instanceAstra.retCol(), position, direction));
 
-
-
             // Increment # of enemies this level and set next spawn time
             ++enemiesThisLevel;
             SetNextSpawnTime();
@@ -733,16 +622,8 @@ for (int ik = 0; ik < 50; ik++)
             {
                 Vector3 tempPosition = model.GetModelPosition();
                 Vector3 tempDirection = model.GetTankDirection();
-                //Vector3 tempDirection = Tank.
                 enemyFireShots(gameTime, tempPosition, tempDirection);
             }
-            //foreach (BasicModel model2 in enemies2)
-            //{
-            //    Vector3 tempPosition = model2.GetModelPosition();
-            //    Vector3 tempDirection = model2.GetTankDirection();
-            //    //Vector3 tempDirection = Tank.
-            //    enemyFireShots(gameTime, tempPosition, tempDirection);
-            //}
         }
 
 
@@ -751,22 +632,10 @@ for (int ik = 0; ik < 50; ik++)
 
             if (shotCountdown <= 0)
             {
-                //// Did player press space bar or left mouse button?
-                //if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-
-                //{
-                    //bulletPosition = Tank.tankPosition;
-                    //this.bulletPosition = bulletPosition;
-                    //this.bulletDirection = bulletDirection;
 
                     this.bulletDirection = tankModel.getPosition()- bulletPosition;
                     this.bulletDirection.Y = 20;
-                    //bulletDirection.X *= -1;
-                    //bulletDirection.Z *= -1;
-                    //this.bulletDirection = new Vector3(1,0,1);
                     this.bulletDirection.Normalize();
-
-
                     // Add a shot to the model manager
                     AddEnemyShot(
                        bulletPosition,
@@ -787,7 +656,6 @@ for (int ik = 0; ik < 50; ik++)
             direction.Y = 0;
             position.Y = 30;    //bullet heigth
             enemyShots.Add(new Bullet(
-                //Game.Content.Load<Model>(@"Models\Bullet\ammo"),
                 Game.Content.Load<Model>(@"Models\Bullet\bullet"),
                 position, direction * 50, 0, 0, 0));
         }

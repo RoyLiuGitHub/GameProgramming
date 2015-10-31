@@ -102,7 +102,6 @@ namespace Assignment
 
         Vector3? pickPosition;
         public static Vector3 tankPosition;
-        //Vector3 tankPosition;
         public static Vector3 turretDirection;
 
         const float round = 10f;
@@ -118,9 +117,6 @@ namespace Assignment
         int[,] array;
         private int row;
         private int col;
-
-
-
         //2015/10/30
         Vector3 preTankPosition;
         Vector3 preDirection;
@@ -133,9 +129,6 @@ namespace Assignment
         bool isNavigate;
 
         private float scaleRatio = 100f;
-
-
-
         public Tank(Model model, GraphicsDevice device, Camera camera, int[,] map, int r, int c)
             : base(model)
         {
@@ -190,30 +183,7 @@ namespace Assignment
                 velocity.X = -velocity.X;
             }
         }
-        /*
-        static void CheckForCollisions(ref WorldObject c1, ref WorldObject c2)
-        {
-            for (int i = 0; i < c1.model.Meshes.Count; i++)
-            {
-                // Check whether the bounding boxes of the two cubes intersect.
-                BoundingSphere c1BoundingSphere = c1.model.Meshes[i].BoundingSphere;
-                c1BoundingSphere.Center += c1.position;
-
-                for (int j = 0; j < c2.model.Meshes.Count; j++)
-                {
-                    BoundingSphere c2BoundingSphere = c2.model.Meshes[j].BoundingSphere;
-                    c2BoundingSphere.Center += c2.position;
-
-                    if (c1BoundingSphere.Intersects(c2BoundingSphere))
-                    {
-                        c2.ReverseVelocity();
-                        c1.Backup();
-                        c1.ReverseVelocity();
-                        return;
-                    }
-                }
-            }
-        }*/
+        
         public virtual Vector3 getCurSpeed()
         {
             return speed;
@@ -231,19 +201,10 @@ namespace Assignment
             isAuto = true;
             preTankPosition = tankPosition;
             preDirection = direction;
-
-
-            //base.update(gameTime);
             float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 100.0f;
             float rotationPerFrame = timeDifference * 1f;
             float movementPerFrame = timeDifference * 1f;
-
-
-
-
             MouseState mousestate = Mouse.GetState();
-
-
             float time = (float)gameTime.TotalGameTime.Milliseconds / 100;
             GetUserInput(gameTime);
             navigate(gameTime);
@@ -263,7 +224,6 @@ namespace Assignment
             }
 
             base.update(gameTime);
-
         }
 
         public void navigate(GameTime gameTime)
@@ -281,8 +241,6 @@ namespace Assignment
 
                     pickPosition = mousePick.GetCollisionPosition();
                     Grid destinationPositionRowCol = getPointRowCol(pickPosition);
-                    //Grid destinationPositionRowCol = getPointRowColTest();
-
                     initMap();
                     Point p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
 
@@ -290,8 +248,6 @@ namespace Assignment
                     {
                         Vector3 nextcood = getPointCood(p);
                         destination = nextcood;
-                        //destination = pickPosition.Value;
-
                         destination.Y = 0;
                         distance = destination - getCurrentPosition();
 
@@ -303,79 +259,68 @@ namespace Assignment
 
 
                 if (isNavigate == true)
-                { 
-
-                if (lGarr != null)
                 {
-                    Vector3 tmpver3 = Vector3.Zero;
-                    if (lGarr.Count >= 2)
-                    {
-                        tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
-                    }
-                    else if (lGarr.Count == 1)
-                    {
-                        tmpver3 = getPointCood(lGarr[0]);
-                    }
 
-                    //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
-                    //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
-                    if (Math.Abs(tmpver3.X - tankPosition.X) < 20 && Math.Abs(tmpver3.Y - tankPosition.Y) < 20)
+                    if (lGarr != null)
                     {
-                        if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
-                        else if (lGarr.Count == 1)
-                        {
-                            lGarr.RemoveAt(0);
-                            bStart = true;
-                        }
-
+                        Vector3 tmpver3 = Vector3.Zero;
                         if (lGarr.Count >= 2)
                         {
-                            destination = getPointCood(lGarr[lGarr.Count - 2]);
-                            //destination = pickPosition.Value;
-
-                            destination.Y = 0;
-                            distance = destination - tankPosition;
-
-                            direction = distance;
-                            direction.Normalize();
+                            tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
                         }
+                        else if (lGarr.Count == 1)
+                        {
+                            tmpver3 = getPointCood(lGarr[0]);
+                        }
+
+                        if (Math.Abs(tmpver3.X - tankPosition.X) < 20 && Math.Abs(tmpver3.Y - tankPosition.Y) < 20)
+                        {
+                            if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
+                            else if (lGarr.Count == 1)
+                            {
+                                lGarr.RemoveAt(0);
+                                bStart = true;
+                            }
+
+                            if (lGarr.Count >= 2)
+                            {
+                                destination = getPointCood(lGarr[lGarr.Count - 2]);
+                                destination.Y = 0;
+                                distance = destination - tankPosition;
+
+                                direction = distance;
+                                direction.Normalize();
+                            }
+                        }
+
+                    }
+                    if (bStart && preMousePick != Vector3.Zero)
+                    {
+                        destination = pickPosition.Value;
+
+                        destination.Y = 0;
+                        distance = destination - tankPosition;
+
+                        direction = distance;
+                        direction.Normalize();
                     }
 
-                }
-                if (bStart && preMousePick != Vector3.Zero)
-                {
-                    destination = pickPosition.Value;
 
-                    destination.Y = 0;
-                    distance = destination - tankPosition;
-
-                    direction = distance;
-                    direction.Normalize();
-                }
-
-
-                if (!inBrakeRange(destination))
-                {
-                    v.increaseVelocity(gameTime);
-                    speed = direction * v.Speed;
+                    if (!inBrakeRange(destination))
+                    {
+                        v.increaseVelocity(gameTime);
+                        speed = direction * v.Speed;
                         tankPosition += speed;
-
-                    angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
-
-                    rotation = Matrix.CreateRotationY(angle);
-
-                    TankTranslation(gameTime);
-                }
-                else
-                {
-                    speed = Vector3.Zero;
+                        angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
+                        rotation = Matrix.CreateRotationY(angle);
+                        TankTranslation(gameTime);
+                    }
+                    else
+                    {
+                        speed = Vector3.Zero;
                         tankPosition += speed;
-                    v.Speed = 0;
+                        v.Speed = 0;
                         isNavigate = false;
-
-                    //angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
-
-                        //rotation = Matrix.CreateRotationY(angle);
                     }
                 }
             }
@@ -443,9 +388,6 @@ namespace Assignment
             HatchRotation = MathHelper.Clamp((float)Math.Sin(time * 2) * 2, -1, 0);
 
             turretBone.Transform *= turretRotation * turretTransform;
-
-            //TurretRotation = (float)Math.Atan2(Camera.getCameraDirection().X - tankPosition.X, Camera.getCameraDirection().Z - tankPosition.Z);
-
             leftBackWheelBone.Transform = wheelRotation * leftBackWheelTransform;
             rightBackWheelBone.Transform = wheelRotation * rightBackWheelTransform;
             leftFrontWheelBone.Transform = wheelRotation * leftFrontWheelTransform;
@@ -461,8 +403,6 @@ namespace Assignment
             float x = tankPosition.X;
             float z = tankPosition.Z;
             Console.WriteLine("X is " + x  + "  z is "+ z);
-
-            //float minBoundary = Boundary.GetBoundary() - scaleRatio;
             float minBoundary = Boundary.GetBoundary();
             if (tankPosition.X > (1800))
                 tankPosition.X = 1800;
@@ -481,10 +421,8 @@ namespace Assignment
             var parent = maze.FindPath(start, end, false);
 
             lGarr = new List<Point>();
-            //Console.WriteLine("Print path:");
             while (parent != null)
             {
-                //Console.WriteLine(parent.X + ", " + parent.Y);
                 lGarr.Add(parent);
                 parent = parent.ParentPoint;
             }
@@ -523,15 +461,12 @@ namespace Assignment
         public Vector3 getPointCoodTest(Grid rc)
         {
             Vector3 retv = new Vector3();
-
             retv.Y = 0f;
-
             for (int r = 0; r < row; r++)
             {
                 if (rc.row == r)
                 {
                     retv.Z = 2200 - 40 * r - 20;
-                    //retv.X = 1600 - 200 * r - 100;
                     break;
                 }
             }
@@ -541,11 +476,8 @@ namespace Assignment
                 if (rc.col == c)
                 {
                     retv.X = leftBoundary - 40 * c - 20;
-                    //retv.Z = -1000 + 200 * c + 100;
                 }
             }
-            //Console.WriteLine("row--------------" + row);
-            //Console.WriteLine("col--------------" + col);
 
             return retv;
         }
@@ -554,8 +486,6 @@ namespace Assignment
 
             int retRow = 0;
             int retCol = 0;
-            //Console.WriteLine(pos.Value.X);
-            //Console.WriteLine(pos.Value.Z);
             for (int r = 0; r < row; r++)
             {
                 if (pos.Value.Z < 2400 - 40 * r && pos.Value.Z >= 2400 - 40 * (r + 1))
@@ -573,9 +503,6 @@ namespace Assignment
                     break;
                 }
             }
-            //Console.WriteLine("row--------------" + row);
-            //Console.WriteLine("col--------------" + col);
-
             Grid retg = new Grid(retRow, retCol);
             return retg;
         }
@@ -591,7 +518,6 @@ namespace Assignment
                 if (rc.X == r)
                 {
                     retv.Z = 2400 - 40 * r - 20;
-                    //retv.X = 1600 - 200 * r - 100;
                     break;
                 }
             }
@@ -601,11 +527,8 @@ namespace Assignment
                 if (rc.Y == c)
                 {
                     retv.X = leftBoundary - 40 * c - 20;
-                    //retv.Z = -1000 + 200 * c + 100;
                 }
             }
-            //Console.WriteLine("row--------------" + row);
-            //Console.WriteLine("col--------------" + col);
 
             return retv;
         }
@@ -617,7 +540,6 @@ namespace Assignment
 
         public override Vector3 getCurrentPosition()
         {
-            //return base.getCurrentPosition();
             return translation.Translation;
         }
 
@@ -629,15 +551,8 @@ namespace Assignment
         {
             return scale;
         }
-        /*protected override Matrix GetWorld()
-        {
-            return base.GetWorld();
-        }*/
-
         public override void setModelSpeed(float s)
         {
-            //base.setModelSpeed(s);
-            //wheelRotationValue = s;
             v.Speed = 0;
             speed = Vector3.Zero;
         }

@@ -40,10 +40,6 @@ namespace Assignment
 
                 position += seekSpeed;
                 world = Matrix.CreateTranslation(position);
-
-                //angle = (float)Math.Atan2((distance.X - position.X), (distance.Z - position.Z));
-                //rotation = Matrix.CreateRotationY(angle);
-
                 angle = (float)Math.Atan2(1, -1);
                 rotation = Matrix.CreateRotationY(angle);
 
@@ -52,15 +48,10 @@ namespace Assignment
             //Flee
             else
             {
-                //world *= Matrix.CreateTranslation(position);
 
                 position -= seekSpeed;
                 distance += seekSpeed;
                 world = Matrix.CreateTranslation(position);
-
-                //angle = (float)Math.Atan2((distance.X - position.X), (distance.Z - position.Z));
-                //rotation = Matrix.CreateRotationY(angle);
-
                 angle = (float)Math.Atan2(-1, 1);
                 rotation = Matrix.CreateRotationY(angle);
             }
@@ -71,10 +62,7 @@ namespace Assignment
 
         public override Matrix getWorld()
         {
-            //return rotation * world;
             return Matrix.CreateScale(0.30f) * rotation * world;
         }
-
-
     }
 }

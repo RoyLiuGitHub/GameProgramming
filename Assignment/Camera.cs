@@ -29,7 +29,6 @@ namespace Assignment
         public Camera(Game game, Vector3 pos, Vector3 target, Vector3 up)
             : base(game)
         {
-            //view = Matrix.CreateLookAt(pos, target, up);
             hasJump = false;
             hasFall = false;
             velocity = new Vector3(0, 0, 0);
@@ -62,17 +61,6 @@ namespace Assignment
 
         public override void Update(GameTime gameTime)
         {
-            //preCameraPosition = cameraPosition;
-            //Vector3 temp = Tank.tankPosition;
-
-            ////Yaw rotation
-            //cameraDirection = Vector3.Transform(cameraDirection, Matrix.CreateFromAxisAngle(cameraUp,
-            //    (-MathHelper.PiOver4 / 70) *
-            //    (Mouse.GetState().X - prevMouseState.X)));
-
-
-
-
             //Zoom
             if (prevMouseState.ScrollWheelValue < Mouse.GetState().ScrollWheelValue)
             {

@@ -11,12 +11,6 @@ namespace Assignment
         {
             translation.Translation = new Vector3(0, 3000, 0);
         }
-
-        /*public override void update()
-        {
-            base.update();
-        }*/
-
         public override void Draw(GraphicsDevice device, Camera camera)
         {
             device.SamplerStates[0] = SamplerState.LinearClamp;
@@ -25,15 +19,6 @@ namespace Assignment
 
         public override Matrix getWorld()
         {
-            ////return Matrix.CreateScale(2000f);
-            //Vector3 movement = Camera.cameraPosition;
-            //movement.Y = 0;
-
-            //return Matrix.CreateScale(2000f) * Matrix.CreateTranslation(movement);
-
-
-            //return Matrix.CreateScale(3000f);
-
             return Matrix.CreateScale(2000f) * translation;
         }
 

@@ -78,21 +78,6 @@ namespace Assignment
 
         public virtual void Draw(GraphicsDevice device, Camera camera)
         {
-            /*Matrix[] tranforms = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(tranforms);
-
-            foreach(ModelMesh mesh in model.Meshes){
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.World = mesh.ParentBone.Transform * GetWorld();
-                    effect.View = camera.view;
-                    effect.Projection = camera.projection;
-
-                    effect.TextureEnabled = true;
-                }
-                mesh.Draw();
-            }*/
-
             Matrix[] transforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(transforms);
 
@@ -101,7 +86,6 @@ namespace Assignment
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.World = transforms[mesh.ParentBone.Index] * getWorld();
-                    //effect.World = mesh.ParentBone.Transform * GetWorld();
                     effect.View = camera.view;
                     effect.Projection = camera.projection;
                     effect.TextureEnabled = true;
@@ -110,8 +94,6 @@ namespace Assignment
                 mesh.Draw();
             }
         }
-
-
         public virtual Matrix getWorld()
         {
             return world;
