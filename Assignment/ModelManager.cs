@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Assignment
 {
+    
     class ModelManager : Microsoft.Xna.Framework.DrawableGameComponent
     {
         List<BasicModel> models = new List<BasicModel>();
@@ -52,8 +53,7 @@ namespace Assignment
         private bool bPursue;
         private bool bEvade;
 
-        List<string> lState;
-
+        
 
         MousePick mousepick;
         Vector3? pickposition;
@@ -121,6 +121,7 @@ namespace Assignment
         //DijkstraManager dij;
         //Astra astra;
         Astra instanceAstra;
+        
 
         public ModelManager(Game game)
             : base(game)
@@ -129,13 +130,13 @@ namespace Assignment
             bPursue = false;
             bEvade = false;
 
-            lState = new List<string>();
+            
 
             //dij = new DijkstraManager();
             instanceAstra = new Astra();
 
             // Initialize game levels
-            levelInfoList.Add(new LevelInfo(1000, 3000, 3, 2, 6, 10));
+            levelInfoList.Add(new LevelInfo(1000, 3000, 10, 2, 6, 10));
             levelInfoList.Add(new LevelInfo(900, 2800, 2, 2, 6, 9));
             levelInfoList.Add(new LevelInfo(800, 2600, 3, 2, 6, 8));
             levelInfoList.Add(new LevelInfo(700, 2400, 4, 3, 7, 7));
@@ -153,7 +154,6 @@ namespace Assignment
 
         }
 
-
         public override void Initialize()
         {
             //Set initial spawn time
@@ -165,13 +165,7 @@ namespace Assignment
 
             text = "FSM: \n";
 
-            XElement xml = XElement.Load(@"Content/fsm_npc1.xml");
-            foreach (XElement state in xml.Elements())
-            {
-                text += "state: " + state.Attribute("fromState").Value + "\n";
-                lState.Add(state.Attribute("fromState").Value.ToString());
-            }
-            curModel = lState[0];
+            
 
             instanceAstra.readMapInformation();
             PlayInfo.initLife(3);
@@ -279,6 +273,8 @@ namespace Assignment
                         model.stop();
                     }
                 }
+
+                CollideEnemy();
                 model.update(gameTime);
                
 
@@ -444,10 +440,10 @@ for (int ik = 0; ik < 50; ik++)
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 30 * boundaryWidth - ik * boundaryWidth, 0, 2200 - 40 * 40)));
             }
             //stones
-            for (int ik = 0; ik < 2; ik++)
+            /*for (int ik = 0; ik < 2; ik++)
             {
                 modelsObstacleFirm.Add(new Boundary(Game.Content.Load<Model>(@"Models/Boundary/stone"), ((Game1)Game).GraphicsDevice, ((Game1)Game).camera, new Vector3(leftBoundary - 38 * boundaryWidth, 0, 2200 - 60 * boundaryWidth - ik * boundaryWidth)));
-            }
+            }*/
             //top
             for (int ik = 0; ik < 100; ik++)
             {
@@ -499,7 +495,25 @@ for (int ik = 0; ik < 50; ik++)
             return retv;
         }
 
-
+        protected bool CollideEnemy()
+        {
+            for (int j = enemies.Count - 1; j >= 0; j--)
+            {
+                for (int i = modelsObstacleFirm.Count - 1; i >= 0; i--)
+                {
+                    if (modelsObstacleFirm[i].CollidesWith(
+                                    modelsObstacleFirm[i].model,
+                                    (modelsObstacleFirm[i].getWorld()),
+                                    enemies[j].model,
+                                    (enemies[j].getWorld())))
+                    {
+                        enemies[j].setBoolCollision();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         protected bool Collide()
         {
             for (int i = modelsObstacleFirm.Count - 1; i >= 0; i--)
@@ -513,20 +527,7 @@ for (int ik = 0; ik < 50; ik++)
                     return true;
                 }
             }
-            for (int j = enemies.Count - 1; j >= 0; j--)
-            {
-                for (int i = modelsObstacleFirm.Count - 1; i >= 0; i--)
-                {
-                    if (modelsObstacleFirm[i].CollidesWith(
-                                    modelsObstacleFirm[i].model,
-                                    (modelsObstacleFirm[i].getWorld()),
-                                    enemies[j].model,
-                                    (enemies[j].getWorld())))
-                    {
-                        return true;
-                    }
-                }
-            }
+            
 
             for (int i = enemies.Count - 1; i >= 0; i--)
             {

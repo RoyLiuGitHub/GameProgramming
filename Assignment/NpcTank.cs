@@ -5,18 +5,27 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Xml.Linq;
 
 namespace Assignment
 {
+    class TankState
+    {
+        public string fromState;
+        public List<string> condition;
+        public List<string> toState;
+    };
+
+
     class NpcTank : BasicModel
     {
-
+        List<TankState> listtankstate;
         Matrix translation = Matrix.Identity;
         Matrix rotation = Matrix.Identity;
         Matrix scale = Matrix.CreateScale(.3f);
 
         MousePick mousePick;
-
+        
         ModelBone leftBackWheelBone;
         ModelBone rightBackWheelBone;
         ModelBone leftFrontWheelBone;
@@ -175,6 +184,26 @@ namespace Assignment
             turretTransform = turretBone.Transform;
             cannonTransform = cannonBone.Transform;
             hatchTransform = hatchBone.Transform;
+
+            XElement xml = XElement.Load(@"Content/fsm_npc1.xml");
+            listtankstate = new List<TankState>();
+
+            int i = 0;
+            foreach (XElement state in xml.Elements())
+            {
+                listtankstate.Add(new TankState());
+                //text += "state: " + state.Attribute("fromState").Value + "\n";
+                listtankstate[i].fromState = state.Attribute("fromState").Value.ToString();
+                listtankstate[i].condition = new List<string>();
+                listtankstate[i].toState = new List<string>();
+                foreach (XElement transition in state.Elements())
+                {
+                    listtankstate[i].condition.Add(transition.Attribute("condition").Value.ToString());
+                    listtankstate[i].toState.Add(transition.Attribute("toState").Value.ToString());
+                }
+                i++;
+
+            }
         }
 
 
@@ -184,6 +213,8 @@ namespace Assignment
 
             lpath = new List<Point>();
             maze = new Maze(array);
+
+
         }
 
         public override void update(GameTime gameTime)
@@ -371,6 +402,7 @@ namespace Assignment
         {
             //public void navigate(GameTime gameTime)
             //{
+            preTankPosition = translation.Translation;
             Grid destinationPositionRowCol = new Grid(0, 0);
             if (reNavigateTime == 0)
             {
@@ -392,143 +424,60 @@ namespace Assignment
                 isNavigate = true;
                 preMousePick = pickPosition;
                 bStart = false;
-                Vector3? cp = new Vector3?(getCurrentPosition());
-                Grid currentPositionRowCol = getPointRowCol(cp);
-
-                //pickPosition = Tank.tankPosition;
-                //Grid destinationPositionRowCol = getPointRowCol(pickPosition);
-                //Grid destinationPositionRowCol = getPointRowColTest();
-
-                initMap();
-                Point p;
-                if ((destinationPositionRowCol.col == currentPositionRowCol.col && destinationPositionRowCol.row == currentPositionRowCol.row) || bCollision)
-                {
-                    p = tankFindPath(destinationPositionRowCol, currentPositionRowCol);
-                    bCollision = false;
-                    isNavigate = false;
-                    if (p != null)
-                    {
-                        Vector3 nextcood = getPointCood(p);
-                        destination = nextcood;
-                        //destination = pickPosition.Value;
-
-                        destination.Y = 0;
-                        distance = destination - getCurrentPosition();
-
-                        direction = distance;
-                        direction.Normalize();
-                    }
-                    else
-                    {
-                        isNavigate = false;
-                    }
-                }
-                else
-                {
-                    isNavigate = false; 
-                }
+                
                 
 
                 reNavigateTime = 3000;
 
 
-
-                
-
             }
 
-
-            if (isNavigate == true)
+            
+            if (bCollision)
             {
-
-                if (lGarr != null)
+                bCollision = false;
+                string tm = changeModel();
+                if (tm.CompareTo("IDLE") == 0)
                 {
-                    Vector3 tmpver3 = Vector3.Zero;
-                    if (lGarr.Count >= 2)
-                    {
-                        tmpver3 = getPointCood(lGarr[lGarr.Count - 2]);
-                    }
-                    else if (lGarr.Count == 1)
-                    {
-                        tmpver3 = getPointCood(lGarr[0]);
-                    }
-
-                    //Console.WriteLine(tmpver3.X + " " + tmpver3.Y + " " + tmpver3.Z);
-                    //Console.WriteLine(translation.Translation.X + " " + translation.Translation.Y + " " + translation.Translation.Z);
-                    if (Math.Abs(tmpver3.X - tankPosition.X) < 20 && Math.Abs(tmpver3.Y - tankPosition.Y) < 20)
-                    {
-                        if (lGarr.Count > 1) lGarr.RemoveAt(lGarr.Count - 1);
-                        else if (lGarr.Count == 1)
-                        {
-                            lGarr.RemoveAt(0);
-                            bStart = true;
-                        }
-
-                        if (lGarr.Count >= 2)
-                        {
-                            destination = getPointCood(lGarr[lGarr.Count - 2]);
-                            //destination = pickPosition.Value;
-
-                            destination.Y = 0;
-                            distance = destination - tankPosition;
-
-                            direction = distance;
-                            direction.Normalize();
-                        }
-                    }
-
-                }
-                if (bStart && preMousePick != Vector3.Zero)
-                {
-                    destination = pickPosition.Value;
-
-                    destination.Y = 0;
-                    distance = destination - tankPosition;
-
-                    direction = distance;
-                    direction.Normalize();
-                }
-
-
-                if (!inBrakeRange(destination))
-                {
-                    v.increaseVelocity(gameTime);
-                    speed = direction * v.Speed;
-                    tankPosition += speed;
-
-                    angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
-
-                    rotation = Matrix.CreateRotationY(angle);
-                    reNavigateTime -= gameTime.TotalGameTime.Milliseconds;
-                    TankTranslation(gameTime);
-                }
-                else
-                {
-                    speed = Vector3.Zero;
-                    tankPosition += speed;
                     v.Speed = 0;
-                    isNavigate = false;
-                    reNavigateTime = 0;
-
-                    //angle = (float)Math.Atan2((pickPosition.Value.X - preTankPosition.X), (pickPosition.Value.Z - preTankPosition.Z));
-
-                    //rotation = Matrix.CreateRotationY(angle);
+                    speed = Vector3.Zero;
+                    translation.Translation = preTankPosition;
                 }
-
             }
             else
             {
-                //streeing
-                float distance = Vector3.Distance(Tank.tankPosition, tankPosition);
-                if (distance > MIN_DISTANCE)
-                {
-                    Vector3 pursueDirect =  Tank.tankPosition - tankPosition;
-                    pursueDirect.Normalize();
-                    v.increaseVelocity(gameTime);
-                    speed = pursueDirect * v.Speed;
-                    tankPosition += speed;
+                isNavigate = false;
+            }
+
+
+            
+            //streeing
+            float distance = Vector3.Distance(Tank.tankPosition, tankPosition);
+            if (distance > MIN_DISTANCE)
+            {
+                Vector3 pursueDirect =  Tank.tankPosition - tankPosition;
+                pursueDirect.Normalize();
+                v.increaseVelocity(gameTime);
+                speed = pursueDirect * v.Speed;
+                tankPosition += speed;
+            }
+        }
+
+        public string changeModel(){
+            foreach(TankState ts in listtankstate){
+                if(ts.fromState.CompareTo("PURSUE") == 0 || ts.fromState.CompareTo("EVADE") == 0){
+                    for (int i = 0; i < ts.condition.Count; i++ )
+                    {
+                        if (ts.condition[i].CompareTo("PLAYER_FAR") == 0)
+                        {
+                            return ts.toState[i];
+                        }
+                    }
+                    
                 }
             }
+
+            return "IDLE";
         }
 
         private void TankTranslation(GameTime gameTime)
